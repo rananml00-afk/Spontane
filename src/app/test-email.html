@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spontane - Email Test Tool</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 800px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    
+    h1 {
+      color: #667eea;
+      margin-bottom: 10px;
+      font-size: 32px;
+    }
+    
+    .subtitle {
+      color: #6b7280;
+      margin-bottom: 30px;
+      font-size: 16px;
+    }
+    
+    .card {
+      background: #f9fafb;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    
+    .card.orange {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border-color: #f59e0b;
+    }
+    
+    .card.red {
+      background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+      border-color: #ef4444;
+    }
+    
+    .card.green {
+      background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+      border-color: #10b981;
+    }
+    
+    .card h2 {
+      font-size: 20px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .card.orange h2 { color: #92400e; }
+    .card.red h2 { color: #991b1b; }
+    .card.green h2 { color: #065f46; }
+    
+    .card p {
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      opacity: 0.9;
+    }
+    
+    button {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+    }
+    
+    button:hover:not(:disabled) {
+      background: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .card.orange button {
+      background: #f59e0b;
+    }
+    
+    .card.orange button:hover:not(:disabled) {
+      background: #d97706;
+    }
+    
+    .card.red button {
+      background: #ef4444;
+    }
+    
+    .card.red button:hover:not(:disabled) {
+      background: #dc2626;
+    }
+    
+    .card.green button {
+      background: #10b981;
+    }
+    
+    .card.green button:hover:not(:disabled) {
+      background: #059669;
+    }
+    
+    .result {
+      margin-top: 16px;
+      padding: 16px;
+      background: white;
+      border-radius: 8px;
+      border: 2px solid #e5e7eb;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    
+    .result.success {
+      border-color: #10b981;
+      background: #ecfdf5;
+      color: #065f46;
+    }
+    
+    .result.error {
+      border-color: #ef4444;
+      background: #fef2f2;
+      color: #991b1b;
+    }
+    
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin-right: 8px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧪 Spontane Email Test Tool</h1>
+    <p class="subtitle">Teste ob Resend funktioniert und sende E-Mails an alle Matches</p>
+    
+    <!-- Debug Info -->
+    <div class="card green" id="debugCard" style="display: none;">
+      <h2>✅ Umgebungsvariablen</h2>
+      <div id="debugResult" class="result"></div>
+    </div>
+    
+    <!-- Test Email -->
+    <div class="card orange">
+      <h2>📧 E-Mail System Testen</h2>
+      <p>Sendet eine Test-E-Mail an <strong>rananml00@gmail.com</strong> um zu prüfen ob Resend funktioniert.</p>
+      <button id="testEmailBtn" onclick="testEmail()">
+        📧 Test-E-Mail senden
+      </button>
+      <div id="testEmailResult" style="display: none;" class="result"></div>
+    </div>
+    
+    <!-- Re-Match All -->
+    <div class="card red">
+      <h2>🔄 Alle Matches Neu Senden</h2>
+      <p><strong>⚠️ ACHTUNG:</strong> Sendet E-Mails an ALLE Personen mit Matches ≥60%.<br>
+      Nur verwenden wenn vorher keine E-Mails verschickt wurden!</p>
+      <button id="rematchBtn" onclick="rematchAll()">
+        🔄 Re-Match All starten
+      </button>
+      <div id="rematchResult" style="display: none;" class="result"></div>
+    </div>
+  </div>
+  
+  <script>
+    const API_URL = 'https://ukxqvokuqagafpdvjgwu.supabase.co/functions/v1/make-server-515521c4';
+    const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVreHF2b2t1cWFnYWZwZHZqZ3d1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY1MTg3OTYsImV4cCI6MjA1MjA5NDc5Nn0.y5Ag1FmJ6gNRBJklJyL3KNsHxYuHjuO-P1PzMrCFzzA';
+    
+    // Check environment on load
+    window.addEventListener('load', async () => {
+      try {
+        const response = await fetch(`${API_URL}/debug-env`);
+        const data = await response.json();
+        
+        const debugCard = document.getElementById('debugCard');
+        const debugResult = document.getElementById('debugResult');
+        
+        debugCard.style.display = 'block';
+        debugResult.textContent = JSON.stringify(data, null, 2);
+        
+        if (!data.environment?.hasResendKey) {
+          debugResult.className = 'result error';
+          alert('⚠️ WARNUNG: RESEND_API_KEY ist nicht gesetzt!\n\nBitte füge den API Key in Supabase hinzu.');
+        } else {
+          debugResult.className = 'result success';
+        }
+      } catch (error) {
+        console.error('Error checking environment:', error);
+      }
+    });
+    
+    async function testEmail() {
+      const btn = document.getElementById('testEmailBtn');
+      const resultDiv = document.getElementById('testEmailResult');
+      
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Sende Test-E-Mail...';
+      resultDiv.style.display = 'none';
+      
+      try {
+        const response = await fetch(`${API_URL}/test-email`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${ANON_KEY}`
+          },
+          body: JSON.stringify({ email: 'rananml00@gmail.com' })
+        });
+        
+        const result = await response.json();
+        
+        resultDiv.style.display = 'block';
+        
+        if (result.success) {
+          resultDiv.className = 'result success';
+          resultDiv.textContent = '✅ Test-E-Mail erfolgreich verschickt!\n\nPrüfe deinen Posteingang (und Spam-Ordner) bei rananml00@gmail.com\n\n' + JSON.stringify(result, null, 2);
+        } else {
+          resultDiv.className = 'result error';
+          resultDiv.textContent = '❌ Fehler beim Senden:\n\n' + JSON.stringify(result, null, 2);
+          
+          if (result.error === 'RESEND_TEST_MODE') {
+            alert('⚠️ Resend ist im Test-Modus!\n\nLösung:\n1. Gehe zu resend.com/domains\n2. Füge deine Domain hinzu\n3. Verifiziere die DNS-Einträge\n\nODER:\n\n1. Gehe zu resend.com/settings/emails\n2. Füge rananml00@gmail.com hinzu\n3. Verifiziere die E-Mail-Adresse');
+          }
+        }
+      } catch (error) {
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'result error';
+        resultDiv.textContent = '❌ Fehler:\n\n' + error.message;
+      }
+      
+      btn.disabled = false;
+      btn.innerHTML = '📧 Test-E-Mail senden';
+    }
+    
+    async function rematchAll() {
+      if (!confirm('⚠️ ACHTUNG!\n\nDies sendet E-Mails an ALLE Personen die Matches haben!\n\nNur fortfahren wenn vorher KEINE E-Mails verschickt wurden.\n\nFortfahren?')) {
+        return;
+      }
+      
+      const btn = document.getElementById('rematchBtn');
+      const resultDiv = document.getElementById('rematchResult');
+      
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Verarbeite Matches...';
+      resultDiv.style.display = 'none';
+      
+      try {
+        const response = await fetch(`${API_URL}/speaking-partner/rematch-all`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${ANON_KEY}`
+          }
+        });
+        
+        const result = await response.json();
+        
+        resultDiv.style.display = 'block';
+        
+        if (result.success) {
+          resultDiv.className = 'result success';
+          resultDiv.textContent = '✅ Re-Matching abgeschlossen!\n\n📊 Statistik:\n' +
+            `   Total Anfragen: ${result.stats.totalRequests}\n` +
+            `   E-Mails verschickt: ${result.stats.emailsSent}\n` +
+            `   Fehler: ${result.stats.errors}\n\n` +
+            '📝 Detailliertes Log:\n' +
+            result.log.join('\n');
+        } else {
+          resultDiv.className = 'result error';
+          resultDiv.textContent = '❌ Fehler:\n\n' + JSON.stringify(result, null, 2);
+        }
+      } catch (error) {
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'result error';
+        resultDiv.textContent = '❌ Fehler:\n\n' + error.message;
+      }
+      
+      btn.disabled = false;
+      btn.innerHTML = '🔄 Re-Match All starten';
+    }
+  </script>
+</body>
+</html>
