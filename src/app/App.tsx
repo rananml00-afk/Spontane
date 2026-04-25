@@ -9,7 +9,7 @@ import { Toaster } from "./components/ui/sonner";
 import { useState, useEffect } from "react";
 import { startAutoSync, processQueue, getQueueSize } from "./utils/offlineQueue";
 import { projectId, publicAnonKey } from "./utils/supabase/info";
-import { toast } from "sonner@2.0.3";
+import { toast } from "sonner";
 import { router } from "./routes";
 
 export default function App() {
