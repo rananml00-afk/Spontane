@@ -7,8 +7,6 @@ import { CookiePolicyDialog } from './CookiePolicyDialog';
 import { ImprintDialog } from './ImprintDialog';
 import { GDPRComplianceDialog } from './GDPRComplianceDialog';
 import { DisclaimerDialog } from './DisclaimerDialog';
-import { JournalDialog } from './JournalDialog';
-import { TeamDialog } from './TeamDialog';
 import { AboutDialog } from './AboutDialog';
 import { CareersDialog } from './CareersDialog';
 
@@ -20,13 +18,8 @@ export function Footer() {
   const [imprintOpen, setImprintOpen] = useState(false);
   const [gdprOpen, setGdprOpen] = useState(false);
   const [disclaimerOpen, setDisclaimerOpen] = useState(false);
-  const [journalOpen, setJournalOpen] = useState(false);
-  const [teamOpen, setTeamOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [careersOpen, setCareersOpen] = useState(false);
-  
-  console.log('Footer rendering - team translation:', t('team'));
-  console.log('Footer rendering - journal translation:', t('journal'));
   
   return (
     <footer className="w-full bg-black text-white py-24 px-4">
@@ -81,19 +74,7 @@ export function Footer() {
               </div>
               
               <div>
-                <button 
-                  onClick={() => {
-                    console.log('Team button clicked!');
-                    setTeamOpen(true);
-                  }}
-                  className="text-gray-300 hover:opacity-70 transition-opacity text-base block w-full text-left"
-                >
-                  Team
-                </button>
-              </div>
-              
-              <div>
-                <button 
+                <button
                   onClick={() => {
                     console.log('Careers button clicked!');
                     setCareersOpen(true);
@@ -101,18 +82,6 @@ export function Footer() {
                   className="text-gray-300 hover:opacity-70 transition-opacity text-base block w-full text-left"
                 >
                   Careers
-                </button>
-              </div>
-              
-              <div>
-                <button 
-                  onClick={() => {
-                    console.log('Journal button clicked!');
-                    setJournalOpen(true);
-                  }}
-                  className="text-gray-300 hover:opacity-70 transition-opacity text-base block w-full text-left"
-                >
-                  Journal
                 </button>
               </div>
             </div>
@@ -199,8 +168,6 @@ export function Footer() {
       <ImprintDialog open={imprintOpen} onOpenChange={setImprintOpen} />
       <GDPRComplianceDialog open={gdprOpen} onOpenChange={setGdprOpen} />
       <DisclaimerDialog open={disclaimerOpen} onOpenChange={setDisclaimerOpen} />
-      <JournalDialog open={journalOpen} onOpenChange={setJournalOpen} />
-      <TeamDialog open={teamOpen} onOpenChange={setTeamOpen} />
       <AboutDialog open={aboutOpen} onOpenChange={setAboutOpen} />
       <CareersDialog open={careersOpen} onOpenChange={setCareersOpen} />
     </footer>

@@ -60,20 +60,6 @@ export function Header() {
               >
                 Find Partner
               </button>
-              <Link 
-                to="/team"
-                className="text-base text-gray-600 hover:opacity-70 transition-all"
-                style={{ color: '#c0913f' }}
-              >
-                {t('team')}
-              </Link>
-              <Link 
-                to="/journal"
-                className="text-base text-gray-600 hover:opacity-70 transition-all"
-                style={{ color: '#c0913f' }}
-              >
-                {t('journal')}
-              </Link>
             </nav>
             
             <Select value={language} onValueChange={handleLanguageChange}>
@@ -141,20 +127,6 @@ export function Header() {
                   <span>Tandem</span>
                   <span>Partner</span>
                 </div>
-              </Link>
-              <Link
-                to="/team"
-                onClick={() => setIsMenuOpen(false)}
-                className="block w-full text-left px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md"
-              >
-                {t('team')}
-              </Link>
-              <Link
-                to="/journal"
-                onClick={() => setIsMenuOpen(false)}
-                className="block w-full text-left px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md"
-              >
-                {t('journal')}
               </Link>
               
               {/* Mobile CTA and Language */}
