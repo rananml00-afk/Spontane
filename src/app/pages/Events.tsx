@@ -1,489 +1,207 @@
-import { useState } from 'react';
-import { MapPin, Calendar, Users, Search, ChevronDown } from 'lucide-react';
-import { Button } from '../components/ui/button';
+import { useState, useEffect } from 'react';
+import { MapPin, Calendar, Users, Search, ChevronDown, Heart } from 'lucide-react';
+import { Link } from 'react-router';
+import { EVENTS, EventItem } from '../data/events';
 
-const CATEGORIES = ['All', 'Language Exchange', 'Culture', 'Professional', 'Networking', 'Sports', 'Travel'];
-
-interface Event {
-  id: number;
-  image: string;
-  category: string;
-  title: string;
-  organizer: string;
-  date: string;
-  time: string;
-  city: string;
-  country: string;
-  participants: number;
-  maxParticipants: number;
-  description: string;
-  price: string;
-  language: string;
-}
-
-const EVENTS: Event[] = [
-  {
-    id: 1,
-    image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&h=360&fit=crop&auto=format',
-    category: 'Language Exchange',
-    title: 'Sprachcafé Frankfurt',
-    organizer: 'Sarah Müller',
-    date: '25 June 2026',
-    time: '18:00',
-    city: 'Frankfurt',
-    country: 'Germany',
-    participants: 18,
-    maxParticipants: 30,
-    description: 'Join native speakers and language learners for an informal evening of conversation and networking in German and English.',
-    price: 'Free',
-    language: 'German / English',
-  },
-  {
-    id: 2,
-    image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&h=360&fit=crop&auto=format',
-    category: 'Culture',
-    title: 'Flamenco & Tapas Night',
-    organizer: 'Isabella Torres',
-    date: '28 June 2026',
-    time: '19:30',
-    city: 'Barcelona',
-    country: 'Spain',
-    participants: 22,
-    maxParticipants: 40,
-    description: 'Experience authentic Flamenco performances followed by a guided tapas tasting. A perfect blend of Spanish music, dance, and gastronomy.',
-    price: '€12',
-    language: 'Spanish / English',
-  },
-  {
-    id: 3,
-    image: 'https://images.unsplash.com/photo-1556761175-4b46a572b786?w=600&h=360&fit=crop&auto=format',
-    category: 'Professional',
-    title: 'Berlin Tech Meetup',
-    organizer: 'Markus Weber',
-    date: '30 June 2026',
-    time: '17:00',
-    city: 'Berlin',
-    country: 'Germany',
-    participants: 35,
-    maxParticipants: 60,
-    description: 'Monthly gathering of developers, designers, and founders. Share your projects, find co-founders, and learn from short lightning talks.',
-    price: 'Free',
-    language: 'English / German',
-  },
-  {
-    id: 4,
-    image: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&h=360&fit=crop&auto=format',
-    category: 'Networking',
-    title: 'International Networking Evening',
-    organizer: 'Emma Schneider',
-    date: '2 July 2026',
-    time: '19:00',
-    city: 'Munich',
-    country: 'Germany',
-    participants: 41,
-    maxParticipants: 80,
-    description: 'Meet expats, locals, and travellers from over 20 countries. Structured networking rounds and free mingling in a relaxed rooftop setting.',
-    price: '€8',
-    language: 'English',
-  },
-  {
-    id: 5,
-    image: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=600&h=360&fit=crop&auto=format',
-    category: 'Sports',
-    title: 'Sunday Hiking Group – Taunus',
-    organizer: 'Lukas Hartmann',
-    date: '5 July 2026',
-    time: '09:00',
-    city: 'Frankfurt',
-    country: 'Germany',
-    participants: 12,
-    maxParticipants: 20,
-    description: 'A relaxed 12km hike through the Taunus hills. All fitness levels welcome. Great opportunity to meet people and enjoy nature together.',
-    price: 'Free',
-    language: 'German / English',
-  },
-  {
-    id: 6,
-    image: 'https://images.unsplash.com/photo-1516738901171-8eb4fc13bd20?w=600&h=360&fit=crop&auto=format',
-    category: 'Travel',
-    title: 'Weekend Trip to Prague',
-    organizer: 'Marie Dubois',
-    date: '10 July 2026',
-    time: '07:00',
-    city: 'Prague',
-    country: 'Czech Republic',
-    participants: 9,
-    maxParticipants: 15,
-    description: 'Two-day group trip to Prague. Includes guided old town walk, local food tour, and free time to explore. Accommodation arranged separately.',
-    price: '€45',
-    language: 'English / French',
-  },
-  {
-    id: 7,
-    image: 'https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?w=600&h=360&fit=crop&auto=format',
-    category: 'Language Exchange',
-    title: 'Italian Coffee Chat',
-    organizer: 'Marco Rossi',
-    date: '12 July 2026',
-    time: '10:30',
-    city: 'Vienna',
-    country: 'Austria',
-    participants: 7,
-    maxParticipants: 12,
-    description: 'Casual morning coffee with Italian speakers and learners. Practice conversational Italian in a cozy café over espresso and pastries.',
-    price: 'Free',
-    language: 'Italian / English',
-  },
-  {
-    id: 8,
-    image: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=600&h=360&fit=crop&auto=format',
-    category: 'Culture',
-    title: 'French Film Night',
-    organizer: 'Amélie Fontaine',
-    date: '14 July 2026',
-    time: '20:00',
-    city: 'Paris',
-    country: 'France',
-    participants: 28,
-    maxParticipants: 50,
-    description: 'Screening of a classic French film followed by a discussion in both French and English. Wine and cheese provided.',
-    price: '€5',
-    language: 'French / English',
-  },
-  {
-    id: 9,
-    image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=600&h=360&fit=crop&auto=format',
-    category: 'Professional',
-    title: 'Startup Founders Lunch',
-    organizer: 'Nina Braun',
-    date: '16 July 2026',
-    time: '12:30',
-    city: 'Amsterdam',
-    country: 'Netherlands',
-    participants: 14,
-    maxParticipants: 25,
-    description: 'Intimate lunch for early-stage founders. Share challenges, swap insights, and build lasting connections in the European startup scene.',
-    price: '€15',
-    language: 'English',
-  },
+// ─── Gradient variants cycling per card index ─────────────────────────────────
+const CARD_GRADIENTS = [
+  'linear-gradient(135deg, rgba(192,145,63,0.18) 0%, rgba(192,145,63,0.42) 100%)',
+  'linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%)',
+  'linear-gradient(135deg, #fde68a 0%, #fbbf24 100%)',
 ];
 
-const CITIES = ['All Cities', 'Frankfurt', 'Barcelona', 'Berlin', 'Munich', 'Vienna', 'Prague', 'Paris', 'Amsterdam'];
-const LANGUAGES_LIST = ['All Languages', 'English', 'German', 'French', 'Spanish', 'Italian', 'Turkish'];
-const PRICES = ['Any Price', 'Free', 'Under €10', 'Under €20', 'Under €50'];
-
-const CATEGORY_COLORS: Record<string, string> = {
-  'Language Exchange': 'bg-blue-50 text-blue-700',
-  'Culture': 'bg-purple-50 text-purple-700',
-  'Professional': 'bg-gray-100 text-gray-700',
-  'Networking': 'bg-green-50 text-green-700',
-  'Sports': 'bg-orange-50 text-orange-700',
-  'Travel': 'bg-teal-50 text-teal-700',
-};
-
-export function Events() {
-  const [activeCategory, setActiveCategory] = useState('All');
-  const [searchCity, setSearchCity] = useState('');
-  const [filterCity, setFilterCity] = useState('All Cities');
-  const [filterCategory, setFilterCategory] = useState('All');
-  const [filterLanguage, setFilterLanguage] = useState('All Languages');
-  const [filterPrice, setFilterPrice] = useState('Any Price');
-  const [filterDate, setFilterDate] = useState('');
-
-  const filteredEvents = EVENTS.filter((event) => {
-    const matchesCategory =
-      activeCategory === 'All' || event.category === activeCategory;
-    const matchesFilterCategory =
-      filterCategory === 'All' || event.category === filterCategory;
-    const matchesCity =
-      filterCity === 'All Cities' ||
-      event.city.toLowerCase().includes(filterCity.toLowerCase());
-    const matchesSearch =
-      !searchCity ||
-      event.city.toLowerCase().includes(searchCity.toLowerCase()) ||
-      event.title.toLowerCase().includes(searchCity.toLowerCase());
-    const matchesLanguage =
-      filterLanguage === 'All Languages' ||
-      event.language.toLowerCase().includes(filterLanguage.toLowerCase());
-    const matchesPrice =
-      filterPrice === 'Any Price' ||
-      (filterPrice === 'Free' && event.price === 'Free') ||
-      (filterPrice === 'Under €10' &&
-        (event.price === 'Free' ||
-          (event.price.startsWith('€') && parseFloat(event.price.slice(1)) < 10))) ||
-      (filterPrice === 'Under €20' &&
-        (event.price === 'Free' ||
-          (event.price.startsWith('€') && parseFloat(event.price.slice(1)) < 20))) ||
-      (filterPrice === 'Under €50' &&
-        (event.price === 'Free' ||
-          (event.price.startsWith('€') && parseFloat(event.price.slice(1)) < 50)));
-
-    return (
-      matchesCategory &&
-      matchesFilterCategory &&
-      matchesCity &&
-      matchesSearch &&
-      matchesLanguage &&
-      matchesPrice
-    );
-  });
-
+// ─── Skeleton card ─────────────────────────────────────────────────────────────
+function SkeletonCard() {
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#f7f6f4' }}>
-      {/* Hero */}
-      <div className="bg-white border-b border-gray-100 py-16 px-4">
-        <div className="max-w-7xl mx-auto text-center">
-          <span
-            className="inline-block text-xs uppercase tracking-widest font-semibold mb-4 px-3 py-1 rounded-full"
-            style={{ backgroundColor: '#fdf3e3', color: '#c0913f' }}
-          >
-            Community Events
-          </span>
-          <h1
-            className="text-4xl md:text-5xl font-bold mb-4"
-            style={{ fontFamily: "'Playfair Display', serif", color: '#1a1a2e' }}
-          >
-            Discover Events Near You
-          </h1>
-          <p className="text-lg text-gray-500 max-w-xl mx-auto">
-            Connect with language learners, locals, and travellers through unique experiences across Europe.
-          </p>
-        </div>
-      </div>
-
-      {/* Search & Filter Bar */}
-      <div className="bg-white border-b border-gray-100 shadow-sm sticky top-16 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex flex-wrap gap-3 items-center">
-            {/* Search */}
-            <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search city or event..."
-                value={searchCity}
-                onChange={(e) => setSearchCity(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-600/40 focus:border-transparent"
-              />
-            </div>
-
-            {/* City */}
-            <div className="relative">
-              <select
-                value={filterCity}
-                onChange={(e) => setFilterCity(e.target.value)}
-                className="appearance-none pl-4 pr-8 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-700 focus:outline-none cursor-pointer"
-              >
-                {CITIES.map((c) => (
-                  <option key={c}>{c}</option>
-                ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            </div>
-
-            {/* Category */}
-            <div className="relative">
-              <select
-                value={filterCategory}
-                onChange={(e) => setFilterCategory(e.target.value)}
-                className="appearance-none pl-4 pr-8 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-700 focus:outline-none cursor-pointer"
-              >
-                <option value="All">All Categories</option>
-                {CATEGORIES.slice(1).map((c) => (
-                  <option key={c}>{c}</option>
-                ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            </div>
-
-            {/* Language */}
-            <div className="relative">
-              <select
-                value={filterLanguage}
-                onChange={(e) => setFilterLanguage(e.target.value)}
-                className="appearance-none pl-4 pr-8 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-700 focus:outline-none cursor-pointer"
-              >
-                {LANGUAGES_LIST.map((l) => (
-                  <option key={l}>{l}</option>
-                ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            </div>
-
-            {/* Price */}
-            <div className="relative">
-              <select
-                value={filterPrice}
-                onChange={(e) => setFilterPrice(e.target.value)}
-                className="appearance-none pl-4 pr-8 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-700 focus:outline-none cursor-pointer"
-              >
-                {PRICES.map((p) => (
-                  <option key={p}>{p}</option>
-                ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            </div>
-
-            {/* Date */}
-            <div className="relative">
-              <input
-                type="date"
-                value={filterDate}
-                onChange={(e) => setFilterDate(e.target.value)}
-                className="pl-4 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-700 focus:outline-none cursor-pointer"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-10">
-        {/* Category Tab Filter */}
-        <div className="flex flex-wrap gap-2 mb-8">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-all border ${
-                activeCategory === cat
-                  ? 'text-white border-transparent shadow-md'
-                  : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
-              }`}
-              style={
-                activeCategory === cat
-                  ? { backgroundColor: '#c0913f', borderColor: '#c0913f' }
-                  : {}
-              }
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        {/* Results count */}
-        <p className="text-sm text-gray-500 mb-6">
-          Showing <span className="font-semibold text-gray-700">{filteredEvents.length}</span> events
-        </p>
-
-        {/* Event Cards Grid */}
-        {filteredEvents.length === 0 ? (
-          <div className="text-center py-24">
-            <p className="text-gray-400 text-lg">No events match your filters.</p>
-            <button
-              onClick={() => {
-                setActiveCategory('All');
-                setFilterCity('All Cities');
-                setFilterCategory('All');
-                setFilterLanguage('All Languages');
-                setFilterPrice('Any Price');
-                setFilterDate('');
-                setSearchCity('');
-              }}
-              className="mt-4 text-sm underline"
-              style={{ color: '#c0913f' }}
-            >
-              Clear all filters
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredEvents.map((event) => (
-              <EventCard key={event.id} event={event} />
-            ))}
-          </div>
-        )}
+    <div className="bg-white rounded-3xl border border-black/5 shadow-sm overflow-hidden">
+      <div className="h-48 skeleton" />
+      <div className="p-6 space-y-3">
+        <div className="h-3 rounded-full skeleton w-1/3" />
+        <div className="h-5 rounded-full skeleton w-3/4" />
+        <div className="h-3 rounded-full skeleton w-1/2" />
+        <div className="h-3 rounded-full skeleton w-2/3" />
+        <div className="h-3 rounded-full skeleton w-1/2" />
+        <div className="mt-4 h-11 rounded-xl skeleton" />
       </div>
     </div>
   );
 }
 
-function EventCard({ event }: { event: Event }) {
-  const participantPct = (event.participants / event.maxParticipants) * 100;
-  const almostFull = participantPct >= 80;
+// ─── Event card ────────────────────────────────────────────────────────────────
+function EventCard({ event, index }: { event: EventItem; index: number }) {
+  const [saved, setSaved] = useState(false);
+  const gradient = CARD_GRADIENTS[index % 3];
 
   return (
-    <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col">
-      {/* Image */}
-      <div className="relative overflow-hidden h-48">
-        <img
-          src={event.image}
-          alt={event.title}
-          className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-        />
-        {/* Price badge */}
-        <div
-          className="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold text-white shadow"
-          style={{ backgroundColor: event.price === 'Free' ? '#2d7a45' : '#c0913f' }}
-        >
-          {event.price}
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="p-5 flex flex-col flex-1">
-        {/* Category badge */}
-        <span
-          className={`inline-block self-start text-xs font-semibold px-2.5 py-1 rounded-full mb-3 ${
-            CATEGORY_COLORS[event.category] || 'bg-gray-100 text-gray-700'
-          }`}
-        >
+    <div
+      className="bg-white rounded-3xl border border-black/5 shadow-sm flex flex-col overflow-hidden
+                 transition-all duration-500 hover:-translate-y-1 hover:shadow-xl animate-fade-in-up"
+      style={{ animationDelay: `${0.2 + index * 0.1}s` }}
+    >
+      {/* Image area — gradient */}
+      <div className="relative h-48 flex-shrink-0" style={{ background: gradient }}>
+        <span className="absolute top-3 left-3 text-xs font-semibold px-3 py-1 rounded-full bg-white/60 backdrop-blur-md text-gray-800">
           {event.category}
         </span>
+        <button
+          onClick={(e) => { e.preventDefault(); setSaved((s) => !s); }}
+          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center hover:bg-white/40 transition-colors"
+          aria-label="Save event"
+        >
+          <Heart
+            className="h-4 w-4 transition-colors"
+            style={{ color: saved ? '#c0913f' : 'rgba(30,30,30,0.7)', fill: saved ? '#c0913f' : 'none', strokeWidth: 1.8 }}
+          />
+        </button>
+        <span
+          className="absolute bottom-3 right-4 text-4xl font-bold select-none pointer-events-none"
+          style={{ color: 'rgba(255,255,255,0.35)', fontFamily: "'Playfair Display', serif" }}
+        >
+          {event.city}
+        </span>
+      </div>
 
-        {/* Title */}
+      {/* Body */}
+      <div className="p-6 flex-1 flex flex-col">
         <h3
-          className="text-lg font-bold text-gray-900 mb-1 leading-snug"
-          style={{ fontFamily: "'Playfair Display', serif" }}
+          className="text-xl font-medium leading-tight mb-1"
+          style={{ fontFamily: "'Playfair Display', serif", color: '#1a1a2e' }}
         >
           {event.title}
         </h3>
+        <p className="text-sm mb-4" style={{ color: '#717182' }}>
+          by {event.organizer}
+        </p>
 
-        {/* Organizer */}
-        <p className="text-sm text-gray-500 mb-3">By {event.organizer}</p>
-
-        {/* Meta info */}
-        <div className="space-y-1.5 mb-3">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <Calendar className="h-4 w-4 flex-shrink-0" style={{ color: '#c0913f' }} />
-            <span>{event.date} | {event.time}</span>
+        <div className="space-y-2 mb-6">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 flex-shrink-0" style={{ color: '#c0913f' }} />
+            <span className="text-sm text-gray-700">{event.date} · {event.time}</span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <MapPin className="h-4 w-4 flex-shrink-0" style={{ color: '#c0913f' }} />
-            <span>{event.city}, {event.country}</span>
+          <div className="flex items-center gap-2">
+            <MapPin className="w-4 h-4 flex-shrink-0" style={{ color: '#c0913f' }} />
+            <span className="text-sm text-gray-700">{event.city}</span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <Users className="h-4 w-4 flex-shrink-0" style={{ color: almostFull ? '#d97706' : '#c0913f' }} />
-            <span className={almostFull ? 'text-amber-600 font-medium' : ''}>
-              {event.participants}/{event.maxParticipants} participants
-              {almostFull && ' · Almost full'}
-            </span>
+          <div className="flex items-center gap-2">
+            <Users className="w-4 h-4 flex-shrink-0" style={{ color: '#c0913f' }} />
+            <span className="text-sm text-gray-700">{event.participants} / {event.maxParticipants} participants</span>
           </div>
         </div>
 
-        {/* Participant progress bar */}
-        <div className="w-full h-1 bg-gray-100 rounded-full mb-4">
-          <div
-            className="h-1 rounded-full transition-all"
-            style={{
-              width: `${participantPct}%`,
-              backgroundColor: almostFull ? '#d97706' : '#c0913f',
-            }}
-          />
-        </div>
-
-        {/* Description */}
-        <p className="text-sm text-gray-500 leading-relaxed flex-1 mb-4">
+        <p
+          className="text-sm leading-relaxed flex-1 mb-8"
+          style={{
+            color: '#717182',
+            display: '-webkit-box',
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+          } as React.CSSProperties}
+        >
           {event.description}
         </p>
 
-        {/* CTA */}
-        <Button
-          className="w-full text-white font-semibold py-2.5 rounded-xl hover:opacity-90 transition-opacity mt-auto"
+        <Link
+          to={`/events/${event.id}`}
+          className="mt-auto block w-full text-center text-sm font-medium text-white py-3.5 rounded-xl
+                     shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
           style={{ backgroundColor: '#c0913f' }}
         >
-          Join Event
-        </Button>
+          View Details
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+// ─── Filter chip ───────────────────────────────────────────────────────────────
+function FilterChip({ label }: { label: string }) {
+  return (
+    <button className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-gray-200 bg-white text-sm font-medium shadow-sm hover:border-yellow-500/50 hover:bg-[#fdf3e3] transition-all duration-200 text-gray-700">
+      {label}
+      <ChevronDown className="h-4 w-4 text-gray-400" />
+    </button>
+  );
+}
+
+// ─── Main page ─────────────────────────────────────────────────────────────────
+export function Events() {
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 700);
+    return () => clearTimeout(t);
+  }, []);
+
+  const filtered = EVENTS.filter((e) => {
+    if (!search) return true;
+    const q = search.toLowerCase();
+    return (
+      e.title.toLowerCase().includes(q) ||
+      e.city.toLowerCase().includes(q) ||
+      e.language.toLowerCase().includes(q) ||
+      e.category.toLowerCase().includes(q) ||
+      e.organizer.toLowerCase().includes(q)
+    );
+  });
+
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: '#f7f6f4' }}>
+      <div className="max-w-7xl mx-auto px-6 pt-16 pb-24">
+
+        {/* Zone 1 — Header + Search */}
+        <div className="mb-12 animate-fade-in-up" style={{ animationDelay: '0s' }}>
+          <h1
+            className="text-5xl font-medium mb-4"
+            style={{ fontFamily: "'Playfair Display', serif", color: '#1a1a2e' }}
+          >
+            Discover Events
+          </h1>
+          <p className="text-lg font-light text-gray-500 mb-8 max-w-2xl">
+            Join curated gatherings in your city and practice languages in a natural, immersive environment.
+          </p>
+
+          <div className="max-w-2xl">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search for events, languages, or cities..."
+                className="w-full py-4 pl-12 pr-6 rounded-full bg-white border border-gray-200 text-sm text-gray-800 placeholder-gray-400 shadow-sm
+                           focus:outline-none focus:border-[#c0913f] transition-all"
+                style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
+                onFocus={(e) => { e.target.style.boxShadow = '0 0 0 2px rgba(192,145,63,0.5), 0 1px 4px rgba(0,0,0,0.06)'; }}
+                onBlur={(e) => { e.target.style.boxShadow = '0 1px 4px rgba(0,0,0,0.06)'; }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Zone 2 — Filter chips */}
+        <div className="flex flex-wrap gap-3 mb-10 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+          <FilterChip label="City" />
+          <FilterChip label="Category" />
+          <FilterChip label="Language" />
+          <FilterChip label="Date" />
+        </div>
+
+        {/* Zone 3 — Event grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {loading ? (
+            [0, 1, 2].map((i) => <SkeletonCard key={i} />)
+          ) : filtered.length === 0 ? (
+            <div className="col-span-full text-center py-24 text-gray-400">
+              No events found matching your search.
+            </div>
+          ) : (
+            filtered.map((event, i) => (
+              <EventCard key={event.id} event={event} index={i} />
+            ))
+          )}
+        </div>
       </div>
     </div>
   );
