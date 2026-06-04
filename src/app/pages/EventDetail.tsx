@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '../utils/supabase/client';
+import { EventItem } from '../data/events';
 import { useParams, Link } from 'react-router';
 import { ChevronLeft, Clock, MapPin, Users, Type } from 'lucide-react';
 import { EVENTS } from '../data/events';
@@ -13,12 +15,51 @@ function getInitials(name: string) {
   return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export function EventDetail() {
   const { id } = useParams<{ id: string }>();
-  const event = EVENTS.find((e) => e.id === Number(id));
+  const isUuid = UUID_RE.test(id || '');
+  const mockEvent = isUuid ? undefined : EVENTS.find((e) => e.id === Number(id));
+  const [event, setEvent] = useState<EventItem | undefined>(mockEvent);
+  const [loadingEvent, setLoadingEvent] = useState(isUuid);
   const [joining, setJoining] = useState(false);
   const [joined, setJoined] = useState(false);
-  const [participants, setParticipants] = useState(event?.participants ?? 0);
+  const [participants, setParticipants] = useState(mockEvent?.participants ?? 0);
+
+  useEffect(() => {
+    if (!isUuid) return;
+    supabase.from('events').select('*').eq('id', id!).maybeSingle().then(({ data }) => {
+      if (data) {
+        const mapped: EventItem = {
+          id: data.id,
+          category: data.category || 'Other',
+          title: data.title,
+          organizer: 'Community Member',
+          date: data.date ? new Date(data.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'TBD',
+          time: data.time || '',
+          city: data.city || '',
+          country: '',
+          participants: 0,
+          maxParticipants: 50,
+          description: data.description || '',
+          price: 'Free',
+          language: data.language || '',
+        };
+        setEvent(mapped);
+        setParticipants(0);
+      }
+      setLoadingEvent(false);
+    });
+  }, [id, isUuid]);
+
+  if (loadingEvent) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#f7f6f4' }}>
+        <div className="w-8 h-8 rounded-full border-2 border-[#c0913f] border-t-transparent animate-spin" />
+      </div>
+    );
+  }
 
   if (!event) {
     return (
@@ -33,7 +74,8 @@ export function EventDetail() {
     );
   }
 
-  const gradient = CARD_GRADIENTS[(event.id - 1) % 3];
+  const gradientIndex = typeof event.id === 'number' ? (event.id - 1) % 3 : 0;
+  const gradient = CARD_GRADIENTS[gradientIndex];
   const isFull = participants >= event.maxParticipants;
   const pct = Math.min((participants / event.maxParticipants) * 100, 100);
 

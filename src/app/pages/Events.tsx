@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { supabase } from '../utils/supabase/client';
 import { MapPin, Calendar, Users, Search, ChevronDown, Heart } from 'lucide-react';
 import { Link } from 'react-router';
 import { EVENTS, EventItem } from '../data/events';
@@ -165,7 +166,7 @@ function EventCard({
   event: EventItem;
   index: number;
   saved: boolean;
-  onToggleSave: (id: number) => void;
+  onToggleSave: (id: number | string) => void;
 }) {
   const gradient = CARD_GRADIENTS[index % 3];
 
@@ -255,16 +256,44 @@ export function Events() {
   const [filterCategory, setFilterCategory] = useState('');
   const [filterLanguage, setFilterLanguage] = useState('');
   const [filterDate, setFilterDate] = useState('');
-  const [savedIds, setSavedIds] = useState<Set<number>>(new Set());
+  const [savedIds, setSavedIds] = useState<Set<number | string>>(new Set());
   const [showSaved, setShowSaved] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [dbEvents, setDbEvents] = useState<EventItem[]>([]);
 
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 700);
-    return () => clearTimeout(t);
+    async function fetchEvents() {
+      try {
+        const { data, error } = await supabase
+          .from('events')
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (!error && data && data.length > 0) {
+          const mapped: EventItem[] = data.map((row) => ({
+            id: row.id as string,
+            category: row.category || 'Other',
+            title: row.title,
+            organizer: 'Community Member',
+            date: row.date ? new Date(row.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'TBD',
+            time: row.time || '',
+            city: row.city || '',
+            country: '',
+            participants: 0,
+            maxParticipants: 50,
+            description: row.description || '',
+            price: 'Free',
+            language: row.language || '',
+            imageUrl: row.image_url || '',
+          }));
+          setDbEvents(mapped);
+        }
+      } catch { /* use mock data */ }
+      setLoading(false);
+    }
+    fetchEvents();
   }, []);
 
-  const toggleSave = (id: number) => {
+  const toggleSave = (id: number | string) => {
     setSavedIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id); else next.add(id);
@@ -279,7 +308,8 @@ export function Events() {
     setFilterLanguage(''); setFilterDate(''); setShowSaved(false);
   };
 
-  const filtered = EVENTS.filter((e) => {
+  const allEvents = [...dbEvents, ...EVENTS];
+  const filtered = allEvents.filter((e) => {
     if (showSaved && !savedIds.has(e.id)) return false;
 
     if (search) {

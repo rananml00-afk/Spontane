@@ -18,21 +18,19 @@ export function LoginDialog({ open, onOpenChange, onCreateProfile }: Props) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
-    setTimeout(() => {
-      const success = login(email, password);
-      setLoading(false);
-      if (success) {
-        setEmail('');
-        setPassword('');
-        onOpenChange(false);
-      } else {
-        setError('Incorrect email or password. Please try again.');
-      }
-    }, 600);
+    const err = await login(email, password);
+    setLoading(false);
+    if (!err) {
+      setEmail('');
+      setPassword('');
+      onOpenChange(false);
+    } else {
+      setError('Incorrect email or password. Please try again.');
+    }
   };
 
   const inputBase =

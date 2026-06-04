@@ -18,9 +18,9 @@ export function Header() {
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setIsMenuOpen(false);
-    logout();
+    await logout();
     navigate('/');
   };
 

@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { supabase } from '../utils/supabase/client';
 
 export interface UserLanguage {
   name: string;
@@ -17,19 +18,15 @@ export interface UserProfile {
   joinedEventIds: number[];
 }
 
-interface StoredAccount {
-  profile: UserProfile;
-  password: string;
-}
-
 interface ProfileContextType {
   profile: UserProfile | null;
   isLoggedIn: boolean;
-  saveProfile: (data: UserProfile) => void;
-  updateProfile: (data: UserProfile) => void;
-  register: (fullName: string, email: string, password: string, city: string) => void;
-  login: (email: string, password: string) => boolean;
-  logout: () => void;
+  isLoading: boolean;
+  saveProfile: (data: UserProfile) => Promise<void>;
+  updateProfile: (data: UserProfile) => Promise<void>;
+  register: (fullName: string, email: string, password: string, city: string) => Promise<string | null>;
+  login: (email: string, password: string) => Promise<string | null>;
+  logout: () => Promise<void>;
   isLoginDialogOpen: boolean;
   openLoginDialog: () => void;
   closeLoginDialog: () => void;
@@ -37,84 +34,116 @@ interface ProfileContextType {
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
-const ACCOUNT_KEY = 'spontane_account';
-const SESSION_KEY = 'spontane_session';
-
-function loadAccount(): StoredAccount | null {
-  try {
-    const raw = localStorage.getItem(ACCOUNT_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch { return null; }
+function buildProfile(authUser: { email?: string; created_at?: string }, dbRow: Record<string, unknown> | null): UserProfile {
+  return {
+    fullName: (dbRow?.full_name as string) || '',
+    email: authUser.email || '',
+    city: (dbRow?.city as string) || '',
+    bio: (dbRow?.bio as string) || '',
+    languages: (dbRow?.languages as UserLanguage[]) || [],
+    interests: (dbRow?.interests as string[]) || [],
+    memberSince: authUser.created_at
+      ? new Date(authUser.created_at).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
+      : '',
+    upcomingEventIds: [],
+    joinedEventIds: [],
+  };
 }
 
 export function ProfileProvider({ children }: { children: ReactNode }) {
-  const [account, setAccount] = useState<StoredAccount | null>(loadAccount);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
-    return !!loadAccount() && sessionStorage.getItem(SESSION_KEY) === 'true';
-  });
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
 
+  async function loadProfileFromDB(userId: string, authUser: { email?: string; created_at?: string }) {
+    const { data } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .maybeSingle();
+    setProfile(buildProfile(authUser, data));
+    setIsLoggedIn(true);
+  }
+
   useEffect(() => {
-    if (account) {
-      localStorage.setItem(ACCOUNT_KEY, JSON.stringify(account));
-    } else {
-      localStorage.removeItem(ACCOUNT_KEY);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        loadProfileFromDB(session.user.id, session.user).finally(() => setIsLoading(false));
+      } else {
+        setIsLoading(false);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        loadProfileFromDB(session.user.id, session.user);
+      } else {
+        setProfile(null);
+        setIsLoggedIn(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const register = async (fullName: string, email: string, password: string, city: string): Promise<string | null> => {
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) return error.message;
+    const user = data.user;
+    if (user) {
+      await supabase.from('profiles').upsert({
+        id: user.id,
+        full_name: fullName,
+        city,
+        bio: '',
+        languages: [],
+        interests: [],
+        updated_at: new Date().toISOString(),
+      });
+      await loadProfileFromDB(user.id, user);
     }
-  }, [account]);
-
-  const register = (fullName: string, email: string, password: string, city: string) => {
-    const profile: UserProfile = {
-      fullName,
-      email,
-      city,
-      bio: '',
-      languages: [],
-      interests: [],
-      memberSince: new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }),
-      upcomingEventIds: [1, 4, 3],
-      joinedEventIds: [6, 2],
-    };
-    const newAccount: StoredAccount = { profile, password };
-    setAccount(newAccount);
-    setIsLoggedIn(true);
-    sessionStorage.setItem(SESSION_KEY, 'true');
+    return null;
   };
 
-  const login = (email: string, password: string): boolean => {
-    const stored = loadAccount();
-    if (stored && stored.profile.email === email && stored.password === password) {
-      setAccount(stored);
-      setIsLoggedIn(true);
-      sessionStorage.setItem(SESSION_KEY, 'true');
-      return true;
-    }
-    return false;
+  const login = async (email: string, password: string): Promise<string | null> => {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) return error.message;
+    if (data.user) await loadProfileFromDB(data.user.id, data.user);
+    return null;
   };
 
-  const saveProfile = (data: UserProfile) => {
-    const updated: StoredAccount = {
-      profile: { ...data, memberSince: new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) },
-      password: account?.password ?? '',
-    };
-    setAccount(updated);
-    setIsLoggedIn(true);
-    sessionStorage.setItem(SESSION_KEY, 'true');
-  };
-
-  const updateProfile = (data: UserProfile) => {
-    if (!account) return;
-    setAccount({ ...account, profile: data });
-  };
-
-  const logout = () => {
+  const logout = async () => {
+    await supabase.auth.signOut();
+    setProfile(null);
     setIsLoggedIn(false);
-    sessionStorage.removeItem(SESSION_KEY);
+  };
+
+  const saveProfile = async (data: UserProfile) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user) return;
+    await supabase.from('profiles').upsert({
+      id: session.user.id,
+      full_name: data.fullName,
+      city: data.city,
+      bio: data.bio,
+      languages: data.languages,
+      interests: data.interests,
+      updated_at: new Date().toISOString(),
+    });
+    setProfile({ ...data, email: session.user.email || data.email });
+    setIsLoggedIn(true);
+  };
+
+  const updateProfile = async (data: UserProfile) => {
+    await saveProfile(data);
   };
 
   return (
     <ProfileContext.Provider value={{
-      profile: isLoggedIn ? (account?.profile ?? null) : null,
+      profile,
       isLoggedIn,
+      isLoading,
       saveProfile,
       updateProfile,
       register,

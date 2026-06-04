@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { supabase } from '../utils/supabase/client';
 import { Calendar, MapPin, Globe, Tag, AlignLeft, Type, Clock, CheckCircle, Lock, ImagePlus, X } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { useProfile } from '../contexts/ProfileContext';
@@ -33,7 +34,8 @@ interface FormState {
   location: string;
   language: string;
   category: string;
-  image: string; // base64 data URL
+  image: string; // base64 data URL for preview
+  imageFile: File | null;
 }
 
 // ─── Locked Screen ───────────────────────────────────────────────────────────
@@ -82,7 +84,7 @@ function LockedScreen() {
 // ─── Create Event Form ────────────────────────────────────────────────────────
 const EMPTY_FORM: FormState = {
   title: '', description: '', date: '', time: '',
-  city: '', location: '', language: '', category: '', image: '',
+  city: '', location: '', language: '', category: '', image: '', imageFile: null,
 };
 
 function CreateEventForm() {
@@ -100,13 +102,66 @@ function CreateEventForm() {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => setForm((prev) => ({ ...prev, image: reader.result as string }));
+    reader.onload = () => setForm((prev) => ({ ...prev, image: reader.result as string, imageFile: file }));
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setSubmitting(true);
+    setSubmitError('');
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        setSubmitError('You must be logged in to create an event.');
+        setSubmitting(false);
+        return;
+      }
+
+      // Upload image if provided
+      let imageUrl = '';
+      if (form.imageFile) {
+        const ext = form.imageFile.name.split('.').pop();
+        const path = `${session.user.id}/${Date.now()}.${ext}`;
+        const { error: uploadError } = await supabase.storage
+          .from('event-images')
+          .upload(path, form.imageFile, { upsert: true });
+        if (!uploadError) {
+          const { data: urlData } = supabase.storage.from('event-images').getPublicUrl(path);
+          imageUrl = urlData.publicUrl;
+        }
+      }
+
+      // Insert event row
+      const { error: insertError } = await supabase.from('events').insert({
+        user_id: session.user.id,
+        title: form.title,
+        description: form.description,
+        date: form.date || null,
+        time: form.time,
+        city: form.city,
+        location: form.location,
+        language: form.language,
+        category: form.category,
+        image_url: imageUrl || null,
+      });
+
+      if (insertError) {
+        setSubmitError('Could not save event. Please try again.');
+        setSubmitting(false);
+        return;
+      }
+
+      setSubmitted(true);
+    } catch {
+      setSubmitError('Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (submitted) {

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  User, MapPin, Globe, Tag, AlignLeft, Mail, Pencil,
+  User, MapPin, Globe, Tag, AlignLeft, Mail, Pencil, Lock,
   Calendar, Users, Plus, X, CheckCircle, LogOut, Camera,
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -47,7 +47,7 @@ function getInitials(name: string) {
 }
 
 // ─── Profile Form ────────────────────────────────────────────────────────────
-function ProfileForm({ onSave, initial }: { onSave: (p: UserProfile) => void; initial?: UserProfile }) {
+function ProfileForm({ onSave, initial, requirePassword }: { onSave: (p: UserProfile, password?: string) => Promise<void>; initial?: UserProfile; requirePassword?: boolean }) {
   const [fullName, setFullName] = useState(initial?.fullName || '');
   const [email, setEmail] = useState(initial?.email || '');
   const [city, setCity] = useState(initial?.city || '');
@@ -55,6 +55,9 @@ function ProfileForm({ onSave, initial }: { onSave: (p: UserProfile) => void; in
   const [languages, setLanguages] = useState<UserLanguage[]>(initial?.languages || [{ name: '', level: 'B1' }]);
   const [interests, setInterests] = useState<string[]>(initial?.interests || []);
   const [saved, setSaved] = useState(false);
+  const [password, setPassword] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
 
   const addLanguage = () => setLanguages((prev) => [...prev, { name: '', level: 'B1' }]);
   const removeLanguage = (i: number) => setLanguages((prev) => prev.filter((_, idx) => idx !== i));
@@ -65,9 +68,11 @@ function ProfileForm({ onSave, initial }: { onSave: (p: UserProfile) => void; in
       prev.includes(interest) ? prev.filter((i) => i !== interest) : [...prev, interest]
     );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const profile: UserProfile = {
+    setSaving(true);
+    setSaveError('');
+    const profileData: UserProfile = {
       fullName,
       email,
       city,
@@ -75,10 +80,11 @@ function ProfileForm({ onSave, initial }: { onSave: (p: UserProfile) => void; in
       languages: languages.filter((l) => l.name),
       interests,
       memberSince: initial?.memberSince || '',
-      upcomingEventIds: initial?.upcomingEventIds || [1, 4, 3],
-      joinedEventIds: initial?.joinedEventIds || [6, 2],
+      upcomingEventIds: initial?.upcomingEventIds || [],
+      joinedEventIds: initial?.joinedEventIds || [],
     };
-    onSave(profile);
+    await onSave(profileData, requirePassword ? password : undefined);
+    setSaving(false);
     setSaved(true);
   };
 
@@ -150,6 +156,19 @@ function ProfileForm({ onSave, initial }: { onSave: (p: UserProfile) => void; in
               placeholder="you@example.com"
               className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-600/30" />
           </div>
+
+          {/* Password — only shown when creating a new profile */}
+          {requirePassword && (
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <span className="flex items-center gap-2"><Lock className="h-4 w-4" style={{ color: '#c0913f' }} />Password</span>
+              </label>
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6}
+                placeholder="At least 6 characters"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-600/30" />
+              {saveError && <p className="text-xs text-red-500 mt-1">{saveError}</p>}
+            </div>
+          )}
 
           {/* City */}
           <div>
@@ -237,7 +256,7 @@ function ProfileForm({ onSave, initial }: { onSave: (p: UserProfile) => void; in
           <Button type="submit"
             className="w-full text-white font-semibold py-4 rounded-xl text-base hover:opacity-90 transition-opacity shadow-md"
             style={{ backgroundColor: '#c0913f' }}>
-            Save Profile
+            {saving ? 'Saving…' : 'Save Profile'}
           </Button>
         </form>
       </div>
@@ -411,19 +430,22 @@ function ProfileDashboard({ profile, onEdit }: { profile: UserProfile; onEdit: (
 
 // ─── Main Export ──────────────────────────────────────────────────────────────
 export function Profile() {
-  const { profile, isLoggedIn, saveProfile, updateProfile } = useProfile();
+  const { profile, isLoggedIn, saveProfile, updateProfile, register } = useProfile();
   const [editing, setEditing] = useState(false);
 
   if (!isLoggedIn || editing) {
     return (
       <ProfileForm
         initial={editing ? profile! : undefined}
-        onSave={(data) => {
+        requirePassword={!isLoggedIn}
+        onSave={async (data, password) => {
           if (editing) {
-            updateProfile(data);
+            await updateProfile(data);
             setEditing(false);
           } else {
-            saveProfile(data);
+            // New user — register with Supabase Auth
+            await register(data.fullName, data.email, password || '', data.city);
+            await saveProfile(data);
           }
         }}
       />
