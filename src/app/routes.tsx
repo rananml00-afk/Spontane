@@ -5,6 +5,7 @@ import { Events } from "./pages/Events";
 import { EventDetail } from "./pages/EventDetail";
 import { CreateEvent } from "./pages/CreateEvent";
 import { Profile } from "./pages/Profile";
+import { TandemPartner } from "./pages/TandemPartner";
 
 export const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ export const router = createBrowserRouter([
       {
         path: "profile",
         element: <Profile />,
+      },
+      {
+        path: "tandem-partner",
+        element: <TandemPartner />,
       },
     ],
   },

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Calendar, MapPin, Globe, Tag, AlignLeft, Type, Clock, CheckCircle, Lock } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Calendar, MapPin, Globe, Tag, AlignLeft, Type, Clock, CheckCircle, Lock, ImagePlus, X } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { useProfile } from '../contexts/ProfileContext';
 import { useNavigate } from 'react-router';
@@ -33,6 +33,7 @@ interface FormState {
   location: string;
   language: string;
   category: string;
+  image: string; // base64 data URL
 }
 
 // ─── Locked Screen ───────────────────────────────────────────────────────────
@@ -79,23 +80,28 @@ function LockedScreen() {
 }
 
 // ─── Create Event Form ────────────────────────────────────────────────────────
+const EMPTY_FORM: FormState = {
+  title: '', description: '', date: '', time: '',
+  city: '', location: '', language: '', category: '', image: '',
+};
+
 function CreateEventForm() {
-  const [form, setForm] = useState<FormState>({
-    title: '',
-    description: '',
-    date: '',
-    time: '',
-    city: '',
-    location: '',
-    language: '',
-    category: '',
-  });
+  const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [submitted, setSubmitted] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => setForm((prev) => ({ ...prev, image: reader.result as string }));
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -119,7 +125,7 @@ function CreateEventForm() {
           <Button
             onClick={() => {
               setSubmitted(false);
-              setForm({ title: '', description: '', date: '', time: '', city: '', location: '', language: '', category: '' });
+              setForm(EMPTY_FORM);
             }}
             className="w-full text-white font-semibold py-3 rounded-xl hover:opacity-90 transition-opacity"
             style={{ backgroundColor: '#c0913f' }}
@@ -246,6 +252,43 @@ function CreateEventForm() {
               ))}
             </div>
             <input type="text" name="category" value={form.category} onChange={() => {}} required className="sr-only" tabIndex={-1} />
+          </div>
+
+          {/* Event Image */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <span className="flex items-center gap-2"><ImagePlus className="h-4 w-4" style={{ color: '#c0913f' }} />Event Image <span className="text-gray-400 font-normal">(optional)</span></span>
+            </label>
+            {form.image ? (
+              <div className="relative rounded-2xl overflow-hidden border border-gray-200">
+                <img src={form.image} alt="Event preview" className="w-full h-52 object-cover" />
+                <button
+                  type="button"
+                  onClick={() => { setForm((prev) => ({ ...prev, image: '' })); if (fileInputRef.current) fileInputRef.current.value = ''; }}
+                  className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center hover:bg-black/60 transition-colors"
+                  aria-label="Remove image"
+                >
+                  <X className="h-4 w-4 text-white" />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full h-36 rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50 flex flex-col items-center justify-center gap-2 hover:border-[#c0913f] hover:bg-[#fdf3e3] transition-all group"
+              >
+                <ImagePlus className="h-8 w-8 text-gray-300 group-hover:text-[#c0913f] transition-colors" />
+                <span className="text-sm text-gray-400 group-hover:text-[#c0913f] transition-colors">Click to upload an image</span>
+                <span className="text-xs text-gray-300">JPG, PNG, WEBP · max 5 MB</span>
+              </button>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="sr-only"
+            />
           </div>
 
           <div className="border-t border-gray-100 pt-2" />
