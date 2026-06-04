@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../utils/supabase/client';
 import { MapPin, Calendar, Users, Search, ChevronDown, Heart } from 'lucide-react';
 import { Link } from 'react-router';
-import { EVENTS, EventItem } from '../data/events';
+import { EventItem } from '../data/events';
 
 // ─── Gradient variants ────────────────────────────────────────────────────────
 const CARD_GRADIENTS = [
@@ -10,13 +10,6 @@ const CARD_GRADIENTS = [
   'linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%)',
   'linear-gradient(135deg, #fde68a 0%, #fbbf24 100%)',
 ];
-
-// ─── Derived filter options ───────────────────────────────────────────────────
-const CITY_OPTIONS = [...new Set(EVENTS.map((e) => e.city))].sort();
-const CATEGORY_OPTIONS = [...new Set(EVENTS.map((e) => e.category))].sort();
-const LANGUAGE_OPTIONS = [
-  ...new Set(EVENTS.flatMap((e) => e.language.split(' / ').map((l) => l.trim()))),
-].sort();
 
 const MONTH_MAP: Record<string, number> = {
   January: 0, February: 1, March: 2, April: 3, May: 4, June: 5,
@@ -264,11 +257,13 @@ export function Events() {
   useEffect(() => {
     async function fetchEvents() {
       try {
+        const today = new Date().toISOString().split('T')[0];
         const { data, error } = await supabase
           .from('events')
           .select('*')
-          .order('created_at', { ascending: false });
-        if (!error && data && data.length > 0) {
+          .gte('date', today)
+          .order('date', { ascending: true });
+        if (!error && data) {
           const mapped: EventItem[] = data.map((row) => ({
             id: row.id as string,
             category: row.category || 'Other',
@@ -287,7 +282,7 @@ export function Events() {
           }));
           setDbEvents(mapped);
         }
-      } catch { /* use mock data */ }
+      } catch { /* silently fail */ }
       setLoading(false);
     }
     fetchEvents();
@@ -308,7 +303,11 @@ export function Events() {
     setFilterLanguage(''); setFilterDate(''); setShowSaved(false);
   };
 
-  const allEvents = [...dbEvents, ...EVENTS];
+  const cityOptions = [...new Set(dbEvents.map((e) => e.city))].sort();
+  const categoryOptions = [...new Set(dbEvents.map((e) => e.category))].sort();
+  const languageOptions = [...new Set(dbEvents.flatMap((e) => e.language.split(' / ').map((l) => l.trim())))].sort();
+
+  const allEvents = dbEvents;
   const filtered = allEvents.filter((e) => {
     if (showSaved && !savedIds.has(e.id)) return false;
 
@@ -367,9 +366,9 @@ export function Events() {
 
         {/* ── Zone 2: Centred filter chips ── */}
         <div className="flex flex-wrap justify-center gap-3 mb-4 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-          <FilterDropdown label="City"     options={CITY_OPTIONS}     value={filterCity}     onChange={setFilterCity} />
-          <FilterDropdown label="Category" options={CATEGORY_OPTIONS} value={filterCategory} onChange={setFilterCategory} />
-          <FilterDropdown label="Language" options={LANGUAGE_OPTIONS} value={filterLanguage} onChange={setFilterLanguage} />
+          <FilterDropdown label="City"     options={cityOptions}     value={filterCity}     onChange={setFilterCity} />
+          <FilterDropdown label="Category" options={categoryOptions} value={filterCategory} onChange={setFilterCategory} />
+          <FilterDropdown label="Language" options={languageOptions} value={filterLanguage} onChange={setFilterLanguage} />
           <DateFilterChip value={filterDate} onChange={setFilterDate} />
 
           {/* Saved toggle */}
@@ -395,9 +394,9 @@ export function Events() {
         {/* Result count */}
         {!loading && (
           <p className="text-center text-sm text-gray-400 mb-8">
-            {filtered.length === EVENTS.length
-              ? `${EVENTS.length} events`
-              : `${filtered.length} of ${EVENTS.length} events`}
+            {filtered.length === allEvents.length
+              ? `${allEvents.length} event${allEvents.length !== 1 ? 's' : ''}`
+              : `${filtered.length} of ${allEvents.length} events`}
           </p>
         )}
 
@@ -408,11 +407,13 @@ export function Events() {
           ) : filtered.length === 0 ? (
             <div className="col-span-full text-center py-24">
               <p className="text-gray-400 text-lg mb-3">
-                {showSaved ? 'No saved events yet.' : 'No events match your filters.'}
+                {showSaved ? 'No saved events yet.' : hasActiveFilters ? 'No events match your filters.' : 'No upcoming events yet.'}
               </p>
-              <button onClick={clearAll} className="text-sm underline" style={{ color: '#c0913f' }}>
-                Clear all filters
-              </button>
+              {hasActiveFilters && (
+                <button onClick={clearAll} className="text-sm underline" style={{ color: '#c0913f' }}>
+                  Clear all filters
+                </button>
+              )}
             </div>
           ) : (
             filtered.map((event, i) => (

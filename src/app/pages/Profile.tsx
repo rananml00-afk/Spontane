@@ -1,22 +1,12 @@
 import { useState } from 'react';
 import {
   User, MapPin, Globe, Tag, AlignLeft, Mail, Pencil, Lock,
-  Calendar, Users, Plus, X, CheckCircle, LogOut, Camera,
+  Calendar, Plus, X, CheckCircle, LogOut, Camera,
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { useProfile, UserProfile, UserLanguage } from '../contexts/ProfileContext';
 import { useNavigate } from 'react-router';
 
-// ─── Sample data for upcoming / joined events ─────────────────────────
-const UPCOMING_EVENTS = [
-  { id: 1, title: 'Sprachcafé Frankfurt', date: '25 June 2026', time: '18:00', city: 'Frankfurt', category: 'Language Exchange', participants: 18, max: 30 },
-  { id: 4, title: 'International Networking Evening', date: '2 July 2026', time: '19:00', city: 'Munich', category: 'Networking', participants: 41, max: 80 },
-  { id: 3, title: 'Berlin Tech Meetup', date: '30 June 2026', time: '17:00', city: 'Berlin', category: 'Professional', participants: 35, max: 60 },
-];
-const JOINED_EVENTS = [
-  { id: 6, title: 'Weekend Trip to Prague', date: '10 May 2026', city: 'Prague', category: 'Travel' },
-  { id: 2, title: 'Flamenco & Tapas Night', date: '3 April 2026', city: 'Barcelona', category: 'Culture' },
-];
 
 const LANGUAGES_OPTIONS = ['English', 'German', 'French', 'Spanish', 'Italian', 'Portuguese', 'Turkish', 'Dutch', 'Polish', 'Other'];
 const LEVELS: UserLanguage['level'][] = ['Native', 'C2', 'C1', 'B2', 'B1', 'A2', 'A1'];
@@ -33,14 +23,6 @@ const LEVEL_COLORS: Record<string, string> = {
   A1: 'bg-orange-50 text-orange-500 border-orange-200',
 };
 
-const CATEGORY_COLORS: Record<string, string> = {
-  'Language Exchange': 'bg-blue-50 text-blue-700',
-  Culture: 'bg-purple-50 text-purple-700',
-  Professional: 'bg-gray-100 text-gray-700',
-  Networking: 'bg-green-50 text-green-700',
-  Sports: 'bg-orange-50 text-orange-700',
-  Travel: 'bg-teal-50 text-teal-700',
-};
 
 function getInitials(name: string) {
   return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
@@ -373,54 +355,19 @@ function ProfileDashboard({ profile, onEdit }: { profile: UserProfile; onEdit: (
           <h2 className="text-base font-semibold text-gray-800 mb-5 flex items-center gap-2">
             <Calendar className="h-5 w-5" style={{ color: '#c0913f' }} /> Upcoming Events
           </h2>
-          <div className="space-y-4">
-            {UPCOMING_EVENTS.map((event) => (
-              <div key={event.id} className="flex items-center gap-4 p-4 rounded-2xl border border-gray-100 hover:border-gray-200 transition">
-                <div className="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-white text-sm font-bold"
-                  style={{ background: 'linear-gradient(135deg, #c0913f, #e8b86d)' }}>
-                  {event.date.split(' ')[0]}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-800 text-sm truncate">{event.title}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{event.date} · {event.time} · {event.city}</p>
-                </div>
-                <span className={`text-xs font-semibold px-2.5 py-1 rounded-full flex-shrink-0 ${CATEGORY_COLORS[event.category] || 'bg-gray-100 text-gray-600'}`}>
-                  {event.category}
-                </span>
-                <div className="flex items-center gap-1 text-xs text-gray-400 flex-shrink-0">
-                  <Users className="h-3.5 w-3.5" />
-                  {event.participants}/{event.max}
-                </div>
-              </div>
-            ))}
-          </div>
+          <p className="text-sm text-gray-400 mb-4">You haven't joined any upcoming events yet.</p>
           <button onClick={() => navigate('/events')}
-            className="mt-4 text-sm font-medium hover:opacity-70 transition" style={{ color: '#c0913f' }}>
+            className="text-sm font-medium hover:opacity-70 transition" style={{ color: '#c0913f' }}>
             Browse all events →
           </button>
         </div>
 
-        {/* Joined Events */}
+        {/* Event History */}
         <div className="bg-white rounded-3xl shadow-sm p-7">
           <h2 className="text-base font-semibold text-gray-800 mb-5 flex items-center gap-2">
             <CheckCircle className="h-5 w-5" style={{ color: '#c0913f' }} /> Event History
           </h2>
-          <div className="space-y-4">
-            {JOINED_EVENTS.map((event) => (
-              <div key={event.id} className="flex items-center gap-4 p-4 rounded-2xl border border-gray-100">
-                <div className="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center bg-gray-100">
-                  <CheckCircle className="h-5 w-5 text-gray-400" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-700 text-sm truncate">{event.title}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">{event.date} · {event.city}</p>
-                </div>
-                <span className={`text-xs font-semibold px-2.5 py-1 rounded-full flex-shrink-0 ${CATEGORY_COLORS[event.category] || 'bg-gray-100 text-gray-600'}`}>
-                  {event.category}
-                </span>
-              </div>
-            ))}
-          </div>
+          <p className="text-sm text-gray-400">No past events attended yet.</p>
         </div>
 
       </div>
