@@ -303,9 +303,13 @@ export function Events() {
     setFilterLanguage(''); setFilterDate(''); setShowSaved(false);
   };
 
-  const cityOptions = [...new Set(dbEvents.map((e) => e.city))].sort();
-  const categoryOptions = [...new Set(dbEvents.map((e) => e.category))].sort();
-  const languageOptions = [...new Set(dbEvents.flatMap((e) => e.language.split(' / ').map((l) => l.trim())))].sort();
+  const DEFAULT_CITIES = ['Berlin', 'Hamburg', 'Munich', 'Frankfurt', 'Cologne', 'Stuttgart', 'Düsseldorf', 'Leipzig'];
+  const DEFAULT_CATEGORIES = ['Language Exchange', 'Culture', 'Networking', 'Professional', 'Sports', 'Travel', 'Social', 'Other'];
+  const DEFAULT_LANGUAGES = ['English', 'German', 'Spanish', 'French', 'Turkish', 'Arabic', 'Italian', 'Portuguese'];
+
+  const cityOptions = [...new Set([...DEFAULT_CITIES, ...dbEvents.map((e) => e.city).filter(Boolean)])].sort();
+  const categoryOptions = [...new Set([...DEFAULT_CATEGORIES, ...dbEvents.map((e) => e.category).filter(Boolean)])].sort();
+  const languageOptions = [...new Set([...DEFAULT_LANGUAGES, ...dbEvents.flatMap((e) => e.language.split(' / ').map((l) => l.trim())).filter(Boolean)])].sort();
 
   const allEvents = dbEvents;
   const filtered = allEvents.filter((e) => {
