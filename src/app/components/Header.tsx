@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { Button } from './ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Menu, X, Globe, UserCircle, LogOut } from 'lucide-react';
+import { Menu, X, UserCircle, LogOut } from 'lucide-react';
 import { useProfile } from '../contexts/ProfileContext';
 import { ContactDialog } from './ContactDialog';
 import { WaitlistDialog } from './WaitlistDialog';
@@ -10,7 +9,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import logoImage from 'figma:asset/8f1714922e05cf89bc747cac2e58b5803940c8c2.png';
 
 export function Header() {
-  const { language, setLanguage, t } = useLanguage();
+  const { t } = useLanguage();
   const { isLoggedIn, profile, logout, openLoginDialog } = useProfile();
   const navigate = useNavigate();
 
@@ -59,20 +58,6 @@ export function Header() {
                 {t('contact')}
               </button>
             </nav>
-
-            {/* Language */}
-            <Select value={language} onValueChange={(v) => setLanguage(v as any)}>
-              <SelectTrigger className="w-16 h-9 bg-transparent border-gray-300">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="en">EN</SelectItem>
-                <SelectItem value="es">ES</SelectItem>
-                <SelectItem value="fr">FR</SelectItem>
-                <SelectItem value="de">DE</SelectItem>
-                <SelectItem value="tr">TR</SelectItem>
-              </SelectContent>
-            </Select>
 
             {/* Auth */}
             {isLoggedIn && profile ? (
@@ -155,26 +140,11 @@ export function Header() {
                 </div>
               )}
 
-              {/* Language + Waitlist */}
-              <div className="flex items-center justify-between px-3 py-2 space-x-3">
-                <Select value={language} onValueChange={(v) => setLanguage(v as any)}>
-                  <SelectTrigger className="w-20 h-9 bg-transparent border-gray-300">
-                    <div className="flex items-center space-x-1">
-                      <Globe className="h-4 w-4" />
-                      <SelectValue />
-                    </div>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="en">EN</SelectItem>
-                    <SelectItem value="es">ES</SelectItem>
-                    <SelectItem value="fr">FR</SelectItem>
-                    <SelectItem value="de">DE</SelectItem>
-                    <SelectItem value="tr">TR</SelectItem>
-                  </SelectContent>
-                </Select>
+              {/* Waitlist */}
+              <div className="px-3 py-2">
                 <Button
                   onClick={() => { setIsWaitlistOpen(true); setIsMenuOpen(false); }}
-                  className="text-white h-9 px-6 flex-1 max-w-36 text-sm hover:opacity-90"
+                  className="text-white h-9 px-6 text-sm hover:opacity-90 w-full"
                   style={{ backgroundColor: '#c0913f' }}
                 >
                   {t('getStarted')}
