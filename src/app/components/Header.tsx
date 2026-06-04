@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 import { Button } from './ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Menu, X, Globe } from 'lucide-react';
+import { Menu, X, Globe, UserCircle } from 'lucide-react';
+import { useProfile } from '../contexts/ProfileContext';
 import { ContactDialog } from './ContactDialog';
 import { WaitlistDialog } from './WaitlistDialog';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -10,6 +11,7 @@ import logoImage from 'figma:asset/8f1714922e05cf89bc747cac2e58b5803940c8c2.png'
 
 export function Header() {
   const { language, setLanguage, t } = useLanguage();
+  const { isLoggedIn, profile } = useProfile();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
@@ -68,6 +70,14 @@ export function Header() {
               >
                 {t('contact')}
               </button>
+              <Link
+                to="/profile"
+                className="flex items-center gap-1.5 text-base hover:opacity-70 transition-all font-medium"
+                style={{ color: '#c0913f' }}
+              >
+                <UserCircle className="h-5 w-5" />
+                {isLoggedIn && profile ? profile.fullName.split(' ')[0] : 'Profile'}
+              </Link>
             </nav>
             
             <Select value={language} onValueChange={handleLanguageChange}>
@@ -141,6 +151,14 @@ export function Header() {
               >
                 {t('contact')}
               </button>
+              <Link
+                to="/profile"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center gap-2 w-full text-left px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md"
+              >
+                <UserCircle className="h-4 w-4" />
+                {isLoggedIn && profile ? profile.fullName.split(' ')[0] : 'Profile'}
+              </Link>
               
               {/* Mobile CTA and Language */}
               <div className="flex items-center justify-between px-3 py-2 space-x-3">

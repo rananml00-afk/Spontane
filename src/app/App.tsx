@@ -5,6 +5,7 @@ import { MatchAnalyzer } from "./components/MatchAnalyzer";
 import { OfflineQueueIndicator } from "./components/OfflineQueueIndicator";
 import TestMatching from "./test-matching";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import { ProfileProvider } from "./contexts/ProfileContext";
 import { Toaster } from "./components/ui/sonner";
 import { useState, useEffect } from "react";
 import { startAutoSync, processQueue, getQueueSize } from "./utils/offlineQueue";
