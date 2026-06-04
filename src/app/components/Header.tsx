@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { Button } from './ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Menu, X, Globe, UserCircle } from 'lucide-react';
@@ -12,7 +12,21 @@ import logoImage from 'figma:asset/8f1714922e05cf89bc747cac2e58b5803940c8c2.png'
 export function Header() {
   const { language, setLanguage, t } = useLanguage();
   const { isLoggedIn, profile } = useProfile();
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const handleTandemClick = () => {
+    setIsMenuOpen(false);
+    const scroll = () => setTimeout(() => {
+      document.getElementById('speaking-partner-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+    if (window.location.pathname !== '/') {
+      navigate('/');
+      setTimeout(scroll, 300);
+    } else {
+      scroll();
+    }
+  };
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
 
@@ -56,6 +70,13 @@ export function Header() {
               >
                 Events
               </Link>
+              <button
+                onClick={handleTandemClick}
+                className="text-base hover:opacity-70 transition-all"
+                style={{ color: '#c0913f' }}
+              >
+                Tandem Partner
+              </button>
               <Link
                 to="/create-event"
                 className="text-base hover:opacity-70 transition-all"
@@ -135,6 +156,12 @@ export function Header() {
               >
                 Events
               </Link>
+              <button
+                onClick={handleTandemClick}
+                className="block w-full text-left px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md"
+              >
+                Tandem Partner
+              </button>
               <Link
                 to="/create-event"
                 onClick={() => setIsMenuOpen(false)}
