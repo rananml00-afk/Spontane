@@ -7,10 +7,10 @@ import { useProfile } from '../contexts/ProfileContext';
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSwitchToRegister: () => void;
+  onCreateProfile: () => void;
 }
 
-export function LoginDialog({ open, onOpenChange, onSwitchToRegister }: Props) {
+export function LoginDialog({ open, onOpenChange, onCreateProfile }: Props) {
   const { login } = useProfile();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -104,15 +104,15 @@ export function LoginDialog({ open, onOpenChange, onSwitchToRegister }: Props) {
           </Button>
         </form>
 
-        {/* Switch to Register */}
+        {/* Switch to Create Profile */}
         <p className="text-center text-sm text-gray-500 mt-6">
           Don't have an account?{' '}
           <button
-            onClick={() => { onOpenChange(false); onSwitchToRegister(); }}
+            onClick={() => { onOpenChange(false); onCreateProfile(); }}
             className="font-semibold hover:opacity-70 transition-opacity"
             style={{ color: '#c0913f' }}
           >
-            Register
+            Create Profile
           </button>
         </p>
       </DialogContent>

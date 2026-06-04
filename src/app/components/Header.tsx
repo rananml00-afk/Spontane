@@ -7,7 +7,6 @@ import { useProfile } from '../contexts/ProfileContext';
 import { ContactDialog } from './ContactDialog';
 import { WaitlistDialog } from './WaitlistDialog';
 import { LoginDialog } from './LoginDialog';
-import { RegisterDialog } from './RegisterDialog';
 import { useLanguage } from '../contexts/LanguageContext';
 import logoImage from 'figma:asset/8f1714922e05cf89bc747cac2e58b5803940c8c2.png';
 
@@ -20,7 +19,6 @@ export function Header() {
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
 
   const handleTandemClick = () => {
     setIsMenuOpen(false);
@@ -115,11 +113,11 @@ export function Header() {
                   Log In
                 </Button>
                 <Button
-                  onClick={() => setIsRegisterOpen(true)}
+                  onClick={() => { navigate('/profile'); }}
                   className="h-9 px-5 text-sm font-medium text-white hover:opacity-90"
                   style={{ backgroundColor: '#c0913f' }}
                 >
-                  Register
+                  Create Profile
                 </Button>
               </div>
             )}
@@ -162,8 +160,8 @@ export function Header() {
                   <Button variant="outline" onClick={() => { setIsLoginOpen(true); setIsMenuOpen(false); }} className="flex-1 h-9 text-sm border-gray-200">
                     Log In
                   </Button>
-                  <Button onClick={() => { setIsRegisterOpen(true); setIsMenuOpen(false); }} className="flex-1 h-9 text-sm text-white" style={{ backgroundColor: '#c0913f' }}>
-                    Register
+                  <Button onClick={() => { navigate('/profile'); setIsMenuOpen(false); }} className="flex-1 h-9 text-sm text-white" style={{ backgroundColor: '#c0913f' }}>
+                    Create Profile
                   </Button>
                 </div>
               )}
@@ -204,12 +202,7 @@ export function Header() {
       <LoginDialog
         open={isLoginOpen}
         onOpenChange={setIsLoginOpen}
-        onSwitchToRegister={() => setIsRegisterOpen(true)}
-      />
-      <RegisterDialog
-        open={isRegisterOpen}
-        onOpenChange={setIsRegisterOpen}
-        onSwitchToLogin={() => setIsLoginOpen(true)}
+        onCreateProfile={() => { setIsLoginOpen(false); navigate('/profile'); }}
       />
     </header>
   );
