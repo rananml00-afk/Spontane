@@ -38,6 +38,7 @@ interface FormState {
 // ─── Locked Screen ───────────────────────────────────────────────────────────
 function LockedScreen() {
   const navigate = useNavigate();
+  const { openLoginDialog } = useProfile();
   return (
     <div className="min-h-screen flex items-center justify-center px-4" style={{ backgroundColor: '#f7f6f4' }}>
       <div className="bg-white rounded-3xl shadow-sm p-12 max-w-md w-full text-center">
@@ -65,7 +66,7 @@ function LockedScreen() {
             Create Profile
           </Button>
           <Button
-            onClick={() => navigate('/profile')}
+            onClick={openLoginDialog}
             variant="outline"
             className="w-full font-semibold py-3 rounded-xl border-gray-200 text-gray-700 hover:bg-gray-50"
           >

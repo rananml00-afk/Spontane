@@ -30,6 +30,9 @@ interface ProfileContextType {
   register: (fullName: string, email: string, password: string, city: string) => void;
   login: (email: string, password: string) => boolean;
   logout: () => void;
+  isLoginDialogOpen: boolean;
+  openLoginDialog: () => void;
+  closeLoginDialog: () => void;
 }
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
@@ -46,10 +49,10 @@ function loadAccount(): StoredAccount | null {
 
 export function ProfileProvider({ children }: { children: ReactNode }) {
   const [account, setAccount] = useState<StoredAccount | null>(loadAccount);
-  // Session: logged in if an account exists and session flag is set
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
     return !!loadAccount() && sessionStorage.getItem(SESSION_KEY) === 'true';
   });
+  const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
 
   useEffect(() => {
     if (account) {
@@ -117,6 +120,9 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
       register,
       login,
       logout,
+      isLoginDialogOpen,
+      openLoginDialog: () => setIsLoginDialogOpen(true),
+      closeLoginDialog: () => setIsLoginDialogOpen(false),
     }}>
       {children}
     </ProfileContext.Provider>

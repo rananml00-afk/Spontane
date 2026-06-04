@@ -6,19 +6,17 @@ import { Menu, X, Globe, UserCircle, LogOut } from 'lucide-react';
 import { useProfile } from '../contexts/ProfileContext';
 import { ContactDialog } from './ContactDialog';
 import { WaitlistDialog } from './WaitlistDialog';
-import { LoginDialog } from './LoginDialog';
 import { useLanguage } from '../contexts/LanguageContext';
 import logoImage from 'figma:asset/8f1714922e05cf89bc747cac2e58b5803940c8c2.png';
 
 export function Header() {
   const { language, setLanguage, t } = useLanguage();
-  const { isLoggedIn, profile, logout } = useProfile();
+  const { isLoggedIn, profile, logout, openLoginDialog } = useProfile();
   const navigate = useNavigate();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   const handleTandemClick = () => {
     setIsMenuOpen(false);
@@ -37,6 +35,11 @@ export function Header() {
     setIsMenuOpen(false);
     logout();
     navigate('/');
+  };
+
+  const handleLogin = () => {
+    setIsMenuOpen(false);
+    openLoginDialog();
   };
 
   const navLinkClass = 'text-base hover:opacity-70 transition-all';
@@ -84,7 +87,7 @@ export function Header() {
               </SelectContent>
             </Select>
 
-            {/* Auth section */}
+            {/* Auth */}
             {isLoggedIn && profile ? (
               <div className="flex items-center gap-3">
                 <Link
@@ -107,13 +110,13 @@ export function Header() {
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
-                  onClick={() => setIsLoginOpen(true)}
+                  onClick={handleLogin}
                   className="h-9 px-5 text-sm font-medium border-gray-200 text-gray-700 hover:bg-gray-50"
                 >
                   Log In
                 </Button>
                 <Button
-                  onClick={() => { navigate('/profile'); }}
+                  onClick={() => navigate('/profile')}
                   className="h-9 px-5 text-sm font-medium text-white hover:opacity-90"
                   style={{ backgroundColor: '#c0913f' }}
                 >
@@ -132,7 +135,7 @@ export function Header() {
           </button>
         </div>
 
-        {/* Mobile Navigation Menu */}
+        {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden border-t border-gray-200">
             <div className="px-2 pt-2 pb-3 space-y-1">
@@ -144,7 +147,6 @@ export function Header() {
                 {t('contact')}
               </button>
 
-              {/* Mobile auth */}
               {isLoggedIn && profile ? (
                 <>
                   <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md">
@@ -157,7 +159,7 @@ export function Header() {
                 </>
               ) : (
                 <div className="flex items-center gap-2 px-3 pt-1 pb-2">
-                  <Button variant="outline" onClick={() => { setIsLoginOpen(true); setIsMenuOpen(false); }} className="flex-1 h-9 text-sm border-gray-200">
+                  <Button variant="outline" onClick={handleLogin} className="flex-1 h-9 text-sm border-gray-200">
                     Log In
                   </Button>
                   <Button onClick={() => { navigate('/profile'); setIsMenuOpen(false); }} className="flex-1 h-9 text-sm text-white" style={{ backgroundColor: '#c0913f' }}>
@@ -196,14 +198,8 @@ export function Header() {
         )}
       </div>
 
-      {/* Dialogs */}
       <ContactDialog open={isContactOpen} onOpenChange={setIsContactOpen} />
       <WaitlistDialog open={isWaitlistOpen} onOpenChange={setIsWaitlistOpen} />
-      <LoginDialog
-        open={isLoginOpen}
-        onOpenChange={setIsLoginOpen}
-        onCreateProfile={() => { setIsLoginOpen(false); navigate('/profile'); }}
-      />
     </header>
   );
 }
