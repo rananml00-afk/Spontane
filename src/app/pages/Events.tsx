@@ -75,7 +75,7 @@ function FilterDropdown({
       </button>
 
       {open && (
-        <div className="absolute top-full mt-2 left-0 z-20 bg-white border border-gray-100 rounded-2xl shadow-xl py-2 min-w-[160px]">
+        <div className="absolute top-full mt-2 left-0 z-[200] bg-white border border-gray-100 rounded-2xl shadow-xl py-2 min-w-[160px]">
           {value && (
             <button
               onClick={() => { onChange(''); setOpen(false); }}
@@ -133,7 +133,7 @@ function DateFilterChip({ value, onChange }: { value: string; onChange: (v: stri
         <ChevronDown className={`h-4 w-4 transition-transform ${open ? 'rotate-180' : ''}`} style={{ color: active ? '#c0913f' : '#9ca3af' }} />
       </button>
       {open && (
-        <div className="absolute top-full mt-2 left-0 z-20 bg-white border border-gray-100 rounded-2xl shadow-xl p-4 min-w-[220px]">
+        <div className="absolute top-full mt-2 left-0 z-[200] bg-white border border-gray-100 rounded-2xl shadow-xl p-4 min-w-[220px]">
           <p className="text-xs text-gray-400 mb-2 font-medium uppercase tracking-wide">Show events from</p>
           <input
             type="date"
@@ -365,7 +365,7 @@ export function Events() {
         </div>
 
         {/* ── Zone 2: Centred filter chips ── */}
-        <div className="flex flex-wrap justify-center gap-3 mb-4 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+        <div className="relative z-10 flex flex-wrap justify-center gap-3 mb-4 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
           <FilterDropdown label="City"     options={cityOptions}     value={filterCity}     onChange={setFilterCity} />
           <FilterDropdown label="Category" options={categoryOptions} value={filterCategory} onChange={setFilterCategory} />
           <FilterDropdown label="Language" options={languageOptions} value={filterLanguage} onChange={setFilterLanguage} />

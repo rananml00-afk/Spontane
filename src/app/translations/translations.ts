@@ -76,7 +76,7 @@ export const translations = {
     
     // FAQ Items
     whatIsSpontane: "What is Spontane?",
-    whatIsSpontaneAnswer: "Spontane is a language learning app that connects you with people in your area. You don't just learn through videos. You meet others spontaneously, both online and in real life. It makes language feel natural and human.",
+    whatIsSpontaneAnswer: "Spontane is a language learning platform that connects you with people in your area. You don't just learn through videos. You meet others spontaneously, both online and in real life. It makes language feel natural and human.",
     
     whoIsSpontaneFor: "Who is Spontane for?",
     whoIsSpontaneForAnswer: "Spontane is designed for international students, refugees, working professionals with a migration background, and frequent travelers. If you want to learn by speaking and connecting, this is the right app for you.",
@@ -91,7 +91,7 @@ export const translations = {
     canIUseProfessionalAnswer: "Yes. Many users improve their speaking skills for job interviews, networking, or casual workplace conversations. Spontane even offers specific business-focused language spaces.",
     
     whyWasCreated: "Why was Spontane created?",
-    whyWasCreatedAnswer: "Because language is more than grammar. Spontane was created to fill the gap between traditional language learning apps and real-world integration by combining human interaction with meaningful learning opportunities.",
+    whyWasCreatedAnswer: "Because language is more than grammar. Spontane was created to fill the gap between traditional language learning platforms and real-world integration by combining human interaction with meaningful learning opportunities.",
     
     isSpontaneSafe: "Is Spontane safe?",
     isSpontaneSafeAnswer: "Yes. We store all user data according to GDPR standards. The app includes two-factor authentication, encrypted data, and private chatrooms. Only verified users who match your criteria can reach you.",
