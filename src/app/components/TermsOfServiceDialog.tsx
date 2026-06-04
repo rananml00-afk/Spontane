@@ -12,286 +12,174 @@ export function TermsOfServiceDialog({ open, onOpenChange }: TermsOfServiceDialo
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh]">
         <DialogHeader>
-          <DialogTitle className="text-2xl">Terms of Service</DialogTitle>
+          <DialogTitle className="text-2xl">General Terms and Conditions of Use</DialogTitle>
           <DialogDescription>
-            Effective Date: January 24, 2026 | Last Updated: January 24, 2026
+            For "Spontane" · As of: June 2026
           </DialogDescription>
         </DialogHeader>
-        
+
         <ScrollArea className="h-[70vh] pr-4">
           <div className="space-y-6 text-sm">
-            
-            <section className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">1. Acceptance of Terms</h3>
-              <p className="text-gray-700 leading-relaxed">
-                Welcome to Spontane. By accessing or using our platform, submitting a language partner request, or using 
-                our services, you agree to be bound by these Terms of Service. If you do not agree with these terms, 
-                please do not use our services.
-              </p>
-              <p className="text-gray-700 leading-relaxed mt-2">
-                Please note that Spontane is a new startup project in beta phase. We are a small team just starting out. 
-                Errors and issues are normal during this development phase.
-              </p>
-            </section>
 
-            <section className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">2. Service Description</h3>
+            <section>
+              <h3 className="text-base font-semibold text-gray-900 mb-2">§ 1 Scope and Provider</h3>
               <p className="text-gray-700 leading-relaxed mb-2">
-                Spontane is a language learning platform that connects people for real-world language practice. Our services include:
+                (1) These Terms of Use govern the use of the app and website "Spontane" (available at https://www.spontane.app),
+                operated by Rana Namli, Grosse Bleiche 5, 65719 Hofheim am Taunus, Germany (hereinafter "Provider").
               </p>
-              <ul className="list-disc list-inside text-gray-700 space-y-1 ml-4">
-                <li>Language partner matching service based on language goals and preferences</li>
-                <li>Email notifications with partner suggestions</li>
-                <li>Educational resources and language learning tools</li>
-                <li>Community features (when the full app launches)</li>
-              </ul>
-            </section>
-
-            <section className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">3. User Eligibility</h3>
               <p className="text-gray-700 leading-relaxed">
-                You must be at least 18 years old to use our services. By using Spontane, you represent and warrant 
-                that you meet this age requirement and have the legal capacity to enter into these terms.
+                (2) By registering, the user agrees to these Terms of Use. Any differing terms and conditions of the user shall not apply.
               </p>
             </section>
 
-            <section className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">4. User Responsibilities</h3>
-              
-              <h4 className="text-base font-semibold text-gray-800 mt-4 mb-2">4.1 Accurate Information</h4>
-              <p className="text-gray-700 leading-relaxed">
-                You agree to provide accurate, complete, and truthful information when submitting a language partner 
-                request or using our services. False information may result in suspension or termination of services.
-              </p>
-
-              <h4 className="text-base font-semibold text-gray-800 mt-4 mb-2">4.2 Appropriate Conduct</h4>
+            <section>
+              <h3 className="text-base font-semibold text-gray-900 mb-2">§ 2 Description of Services</h3>
               <p className="text-gray-700 leading-relaxed mb-2">
-                When interacting with language partners, you agree to:
+                (1) Spontane is a platform through which users can discover and create spontaneous activities and meetups, and
+                communicate with other users. This includes in particular the display of nearby activities (based on shared location
+                data) and chat functions.
               </p>
-              <ul className="list-disc list-inside text-gray-700 space-y-1 ml-4">
-                <li>Treat others with respect and courtesy</li>
-                <li>Communicate professionally and appropriately</li>
-                <li>Respect cultural differences and boundaries</li>
-                <li>Not harass, discriminate, or engage in abusive behavior</li>
-                <li>Not share inappropriate or offensive content</li>
-                <li>Honor scheduled meetings and provide timely notice of cancellations</li>
-              </ul>
-
-              <h4 className="text-base font-semibold text-gray-800 mt-4 mb-2">4.3 Safety</h4>
-              <p className="text-gray-700 leading-relaxed">
-                You are responsible for your own safety when meeting with language partners. We recommend:
-              </p>
-              <ul className="list-disc list-inside text-gray-700 space-y-1 ml-4">
-                <li>Meeting in public places for in-person sessions</li>
-                <li>Informing someone you trust about your plans</li>
-                <li>Trusting your instincts and reporting suspicious behavior</li>
-                <li>Using video calls before meeting in person</li>
-              </ul>
-            </section>
-
-            <section className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">5. Prohibited Activities</h3>
-              <p className="text-gray-700 leading-relaxed mb-2">You may not:</p>
-              <ul className="list-disc list-inside text-gray-700 space-y-1 ml-4">
-                <li>Use our services for illegal or unauthorized purposes</li>
-                <li>Violate any laws in your jurisdiction</li>
-                <li>Impersonate another person or entity</li>
-                <li>Harass, threaten, or intimidate other users</li>
-                <li>Send spam, phishing, or unsolicited commercial messages</li>
-                <li>Attempt to gain unauthorized access to our systems</li>
-                <li>Use automated tools (bots, scrapers) without permission</li>
-                <li>Collect or harvest user information without consent</li>
-                <li>Share your account credentials with others</li>
-              </ul>
-            </section>
-
-            <section className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">6. Language Partner Matching</h3>
-              
-              <h4 className="text-base font-semibold text-gray-800 mt-4 mb-2">6.1 Matching Process</h4>
-              <p className="text-gray-700 leading-relaxed">
-                Our automatic matching system connects you with language partners based on your preferences, goals, and 
-                availability. We use algorithms to find compatible matches, but we cannot guarantee perfect matches or 
-                successful partnerships.
-              </p>
-
-              <h4 className="text-base font-semibold text-gray-800 mt-4 mb-2">6.2 No Guarantee of Results</h4>
-              <p className="text-gray-700 leading-relaxed">
-                While we strive to provide quality matches, Spontane does not guarantee:
-              </p>
-              <ul className="list-disc list-inside text-gray-700 space-y-1 ml-4">
-                <li>That you will find a compatible partner</li>
-                <li>The quality or reliability of matched partners</li>
-                <li>Language learning outcomes or progress</li>
-                <li>Partner availability or commitment</li>
-              </ul>
-
-              <h4 className="text-base font-semibold text-gray-800 mt-4 mb-2">6.3 User Discretion</h4>
-              <p className="text-gray-700 leading-relaxed">
-                You have complete discretion in choosing whether to contact or meet suggested partners. We recommend 
-                communicating with potential partners before committing to regular practice sessions.
-              </p>
-            </section>
-
-            <section className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">7. Intellectual Property</h3>
-              <p className="text-gray-700 leading-relaxed">
-                All content on Spontane, including text, graphics, logos, images, monster characters, and software, is 
-                the property of Spontane or its licensors and is protected by copyright, trademark, and other intellectual 
-                property laws. You may not copy, modify, distribute, or create derivative works without our express 
-                written permission.
-              </p>
-            </section>
-
-            <section className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">8. Privacy</h3>
-              <p className="text-gray-700 leading-relaxed">
-                Your use of our services is also governed by our Privacy Policy, which explains how we collect, use, and 
-                protect your personal information. By using Spontane, you consent to our data practices as described in 
-                the Privacy Policy.
-              </p>
-            </section>
-
-            <section className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">9. Disclaimers</h3>
-              
-              <h4 className="text-base font-semibold text-gray-800 mt-4 mb-2">9.1 As-Is Service</h4>
-              <p className="text-gray-700 leading-relaxed">
-                Spontane is provided "as is" and "as available" without warranties of any kind, either express or implied, 
-                including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement.
-              </p>
-
-              <h4 className="text-base font-semibold text-gray-800 mt-4 mb-2">9.2 Beta Platform</h4>
               <p className="text-gray-700 leading-relaxed mb-2">
-                Spontane is currently in early development phase. Therefore:
+                (2) Use of the website is free of charge. The app is available in a free basic version and a paid premium version
+                (freemium model). The features of each version are described in the app and on the website.
               </p>
-              <ul className="list-disc list-inside text-gray-700 space-y-1 ml-4">
-                <li>The platform may contain errors, bugs, inaccuracies, or incomplete information</li>
-                <li>Features may change, be removed, or function unexpectedly</li>
-                <li>Matching algorithms are being refined and may not always provide optimal results</li>
-                <li>Content, translations, and communications may contain errors or inaccuracies</li>
-                <li>Service interruptions, downtime, or data loss may occur</li>
-              </ul>
-              <p className="text-gray-700 leading-relaxed mt-3">
-                By using Spontane, you acknowledge and accept these limitations. We are actively working to improve 
-                the platform, but we make no guarantees about accuracy, reliability, or completeness of information 
-                or services.
-              </p>
-
-              <h4 className="text-base font-semibold text-gray-800 mt-4 mb-2">9.3 No Professional Advice</h4>
-              <p className="text-gray-700 leading-relaxed">
-                Spontane is not a professional educational institution or certification provider. Our platform facilitates 
-                peer-to-peer language practice and should not be considered a substitute for formal language education or 
-                professional instruction.
-              </p>
-
-              <h4 className="text-base font-semibold text-gray-800 mt-4 mb-2">9.4 Third Party Interactions</h4>
-              <p className="text-gray-700 leading-relaxed">
-                We are not responsible for the actions, conduct, or behavior of language partners or other users. 
-                Interactions between users occur independently of Spontane, and we are not liable for disputes, injuries, 
-                or damages arising from such interactions.
-              </p>
-            </section>
-
-            <section className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">10. Limitation of Liability</h3>
               <p className="text-gray-700 leading-relaxed mb-2">
-                To the maximum extent permitted by law, Spontane, its founders, officers, directors, employees, agents, 
-                and affiliates shall not be liable for any direct, indirect, incidental, special, consequential, or 
-                punitive damages, including but not limited to:
+                (3) The Provider acts solely as a technical intermediary. Meetups and activities are organized by the users themselves;
+                the Provider is neither a contracting party nor an organizer of such activities.
               </p>
-              <ul className="list-disc list-inside text-gray-700 space-y-1 ml-4">
-                <li>Loss of profits, revenue, or business opportunities</li>
-                <li>Loss of data or information</li>
-                <li>Errors, inaccuracies, or mistakes in content or matching</li>
-                <li>Personal injury or property damage</li>
-                <li>Unauthorized access to your data</li>
-                <li>Bugs, viruses, or harmful code</li>
-                <li>Service interruptions or unavailability</li>
-                <li>Actions or omissions of other users or third parties</li>
-              </ul>
-              <p className="text-gray-700 leading-relaxed mt-3">
-                This limitation applies regardless of the legal theory (contract, tort, negligence, strict liability, or 
-                otherwise), even if we have been informed of the possibility of such damages.
-              </p>
-              <p className="text-gray-700 leading-relaxed mt-3">
-                You use Spontane entirely at your own risk. We assume no responsibility or liability for any consequences 
-                arising from your use of the platform.
-              </p>
-            </section>
-
-            <section className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">11. Indemnification</h3>
               <p className="text-gray-700 leading-relaxed">
-                You agree to indemnify, defend, and hold harmless Spontane and its affiliates from all claims, damages, 
-                losses, liabilities, and expenses (including attorney fees) arising from:
-              </p>
-              <ul className="list-disc list-inside text-gray-700 space-y-1 ml-4 mt-2">
-                <li>Your use of our services</li>
-                <li>Your violation of these terms</li>
-                <li>Your violation of any rights of another person or entity</li>
-                <li>Your interactions with language partners</li>
-              </ul>
-            </section>
-
-            <section className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">12. Termination</h3>
-              <p className="text-gray-700 leading-relaxed">
-                We reserve the right to suspend or terminate your access to our services at any time, with or without 
-                cause or notice, including if we believe you have violated these terms. You may also terminate your use 
-                of our services at any time by contacting us to request account deletion.
+                (4) There is no entitlement to uninterrupted availability. The Provider endeavors to operate the platform as
+                continuously as possible but cannot exclude maintenance, further development, or technical disruptions.
               </p>
             </section>
 
-            <section className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">13. Changes to Terms</h3>
-              <p className="text-gray-700 leading-relaxed">
-                We may modify these terms at any time. We will notify you of material changes via email or through a 
-                prominent notice on our website. Your continued use of our services after changes indicates acceptance 
-                of the updated terms.
-              </p>
-            </section>
-
-            <section className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">14. Governing Law</h3>
-              <p className="text-gray-700 leading-relaxed">
-                These terms are governed by and construed in accordance with the laws of Germany, without regard to its 
-                conflict of law provisions. Any disputes arising from these terms or your use of our services shall be 
-                subject to the exclusive jurisdiction of the courts in Germany.
-              </p>
-            </section>
-
-            <section className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">15. Contact Information</h3>
+            <section>
+              <h3 className="text-base font-semibold text-gray-900 mb-2">§ 3 Registration and User Account</h3>
               <p className="text-gray-700 leading-relaxed mb-2">
-                If you have questions about these Terms of Service, please contact us:
+                (1) Use of the platform requires the creation of a user account. The information requested during registration must
+                be provided truthfully.
               </p>
-              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                <p className="text-gray-800">Email: kontakt@spontane.app</p>
-                <p className="text-gray-800 mt-1">Location: Frankfurt, Germany</p>
-                <p className="text-gray-800 mt-1">Company: Business Online Inc.</p>
-              </div>
+              <p className="text-gray-700 leading-relaxed mb-2">
+                (2) Use is only permitted for natural persons aged 18 or older.
+              </p>
+              <p className="text-gray-700 leading-relaxed">
+                (3) The user account is non-transferable. The user must keep their login credentials confidential and must notify
+                the Provider immediately if there is any indication of misuse.
+              </p>
             </section>
 
-            <section className="mb-6">
-              <p className="text-gray-700 leading-relaxed">
-                By using Spontane's language partner matching service, you acknowledge that:
+            <section>
+              <h3 className="text-base font-semibold text-gray-900 mb-2">§ 4 Obligations and Rules of Conduct</h3>
+              <p className="text-gray-700 leading-relaxed mb-2">
+                (1) The user agrees to comply with applicable law and the rights of third parties when using Spontane.
+                The following are prohibited in particular:
               </p>
-              <ul className="list-disc list-inside text-gray-700 space-y-1 ml-4 mt-2">
-                <li>You understand that interactions with language partners occur independently of Spontane</li>
-                <li>You are personally responsible for your own safety when meeting partners</li>
-                <li>Spontane acts only as a facilitator and is not liable for user behavior</li>
-                <li>You have read, understood, and accepted these terms and our Privacy Policy</li>
-                <li>You understand that we are a new startup and cannot provide guarantees or assume liability</li>
+              <ul className="list-disc list-inside text-gray-700 space-y-1 ml-4 mb-2">
+                <li>offensive, threatening, discriminatory, pornographic, or otherwise unlawful content,</li>
+                <li>harassment of other users (particularly in the chat),</li>
+                <li>providing false identities or creating fake profiles,</li>
+                <li>commercial advertising, spam, or chain messages without the Provider's consent,</li>
+                <li>automated scraping of the platform as well as interference with the technical infrastructure,</li>
+                <li>sharing the location or profile data of other users with third parties.</li>
               </ul>
+              <p className="text-gray-700 leading-relaxed">
+                (2) In the event of violations, the Provider is entitled to delete content, temporarily suspend the account, or
+                terminate it permanently (see § 7).
+              </p>
             </section>
+
+            <section>
+              <h3 className="text-base font-semibold text-gray-900 mb-2">§ 5 User Content and Grant of Rights</h3>
+              <p className="text-gray-700 leading-relaxed mb-2">
+                (1) The user is solely responsible for content they post (e.g. profile information, activity descriptions, messages,
+                images). The Provider does not adopt such content as its own.
+              </p>
+              <p className="text-gray-700 leading-relaxed mb-2">
+                (2) The user grants the Provider a simple, geographically unrestricted right of use in posted content, limited to
+                the duration of the posting, to the extent necessary for the operation of the platform (in particular storage,
+                display to other users, and technical reproduction).
+              </p>
+              <p className="text-gray-700 leading-relaxed">
+                (3) The user warrants that they hold the necessary rights to the content they post.
+              </p>
+            </section>
+
+            <section>
+              <h3 className="text-base font-semibold text-gray-900 mb-2">§ 6 Liability</h3>
+              <p className="text-gray-700 leading-relaxed mb-2">
+                (1) The Provider is liable without limitation for intentional acts and gross negligence, as well as for injury to
+                life, body, or health.
+              </p>
+              <p className="text-gray-700 leading-relaxed mb-2">
+                (2) In cases of simple negligence, the Provider is liable only for breaches of material contractual obligations
+                (cardinal obligations), and only up to the foreseeable damage typical of the contract.
+              </p>
+              <p className="text-gray-700 leading-relaxed mb-2">
+                (3) Liability for the conduct of other users, particularly in the context of in-person meetups, is excluded.
+                Participation in activities organized through Spontane is at the user's own risk. The Provider does not verify the
+                identity of users.
+              </p>
+              <p className="text-gray-700 leading-relaxed">
+                (4) Liability under the German Product Liability Act (Produkthaftungsgesetz) remains unaffected.
+              </p>
+            </section>
+
+            <section>
+              <h3 className="text-base font-semibold text-gray-900 mb-2">§ 7 Term, Termination, and Suspension</h3>
+              <p className="text-gray-700 leading-relaxed mb-2">
+                (1) The user agreement is concluded for an indefinite period. The user may terminate it at any time without notice
+                by deleting their account in the app or by sending an email to kontakt@spontane.app.
+              </p>
+              <p className="text-gray-700 leading-relaxed mb-2">
+                (2) The Provider may terminate the agreement with two weeks' notice. The right to extraordinary termination for good
+                cause — in particular in the event of violations of § 4 — remains unaffected.
+              </p>
+              <p className="text-gray-700 leading-relaxed">
+                (3) If there is reasonable suspicion of a violation, the Provider may temporarily suspend the account. The user will
+                be informed thereof, where permitted and possible, and will be given the opportunity to respond.
+              </p>
+            </section>
+
+            <section>
+              <h3 className="text-base font-semibold text-gray-900 mb-2">§ 8 Amendments to the Terms of Use</h3>
+              <p className="text-gray-700 leading-relaxed">
+                The Provider may amend these Terms with effect for the future, to the extent required by changes in the legal
+                situation, case law, or the further development of the platform, and provided the user is not unreasonably
+                disadvantaged. Amendments will be communicated to the user in text form (e.g. in the app or by email) at least four
+                weeks before they take effect. If the user does not object within this period or continues to use the platform
+                thereafter, the amendments shall be deemed accepted; this will be expressly noted in the notification. If the user
+                objects, the Provider may terminate the agreement with ordinary notice.
+              </p>
+            </section>
+
+            <section>
+              <h3 className="text-base font-semibold text-gray-900 mb-2">§ 9 Final Provisions</h3>
+              <p className="text-gray-700 leading-relaxed mb-2">
+                (1) The law of the Federal Republic of Germany applies, excluding the UN Convention on Contracts for the
+                International Sale of Goods (CISG). With respect to consumers, this choice of law applies only to the extent that
+                it does not deprive them of the protection afforded by mandatory provisions of the law of their habitual residence.
+              </p>
+              <p className="text-gray-700 leading-relaxed mb-2">
+                (2) Should any individual provisions of these Terms be or become invalid, the validity of the remaining provisions
+                shall not be affected.
+              </p>
+              <p className="text-gray-700 leading-relaxed">
+                (3) The European Commission provides a platform for online dispute resolution:{' '}
+                <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer" className="underline text-gray-900 hover:text-gray-700">
+                  https://ec.europa.eu/consumers/odr/
+                </a>. The Provider is neither willing nor obliged to participate in dispute resolution proceedings before a consumer
+                arbitration board.
+              </p>
+            </section>
+
           </div>
         </ScrollArea>
-        
+
         <div className="flex justify-end pt-4 border-t">
-          <Button 
+          <Button
             onClick={() => onOpenChange(false)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8"
+            className="text-white px-8"
+            style={{ backgroundColor: '#c0913f' }}
           >
             Close
           </Button>
