@@ -117,10 +117,13 @@ function CreateEventForm() {
             <CheckCircle className="h-8 w-8" style={{ color: '#c0913f' }} />
           </div>
           <h2 className="text-2xl font-bold mb-3" style={{ fontFamily: "'Playfair Display', serif", color: '#1a1a2e' }}>
-            Event Published!
+            Request Received!
           </h2>
-          <p className="text-gray-500 mb-8">
-            Your event <strong className="text-gray-700">"{form.title}"</strong> has been successfully published to the Spontane community.
+          <p className="text-gray-500 mb-3">
+            Thanks for submitting <strong className="text-gray-700">"{form.title}"</strong>.
+          </p>
+          <p className="text-gray-400 text-sm mb-8">
+            Public event creation is coming very soon. We'll notify you as soon as your event can go live on Spontane.
           </p>
           <Button
             onClick={() => {
@@ -130,7 +133,7 @@ function CreateEventForm() {
             className="w-full text-white font-semibold py-3 rounded-xl hover:opacity-90 transition-opacity"
             style={{ backgroundColor: '#c0913f' }}
           >
-            Create Another Event
+            Submit Another
           </Button>
         </div>
       </div>

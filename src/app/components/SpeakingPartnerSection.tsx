@@ -94,12 +94,7 @@ export function SpeakingPartnerSection() {
         toast.error(data.error || 'Failed to submit. Please try again.');
       }
     } catch (error) {
-      console.error('Error submitting speaking partner request:', error);
-      
-      // OFFLINE FALLBACK: Speichere in lokaler Queue
       if (error instanceof Error && (error.name === 'TypeError' || error.name === 'TimeoutError')) {
-        console.log('🔌 Supabase not reachable, saving to offline queue...');
-        
         const queueId = addToQueue('speaking-partner', formData);
         
         toast.success('✅ Deine Anmeldung wurde gespeichert und wird automatisch übertragen sobald die Verbindung wiederhergestellt ist!', {

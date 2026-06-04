@@ -19,8 +19,8 @@ class AppErrorBoundary extends React.Component<
     };
   }
 
-  componentDidCatch(error: Error) {
-    console.error("Application crashed:", error);
+  componentDidCatch(_error: Error) {
+    // error boundary — crash info shown in UI above
   }
 
   render() {

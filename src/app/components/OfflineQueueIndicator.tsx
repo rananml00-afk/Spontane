@@ -41,8 +41,7 @@ export function OfflineQueueIndicator() {
       }
       
       setQueueSize(result.remaining);
-    } catch (error) {
-      console.error('Error during manual sync:', error);
+    } catch {
       toast.error('Verbindung fehlgeschlagen. Versuche es später erneut.');
     } finally {
       setIsSyncing(false);

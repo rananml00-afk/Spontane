@@ -62,7 +62,6 @@ export function WaitlistDialog({ open, onOpenChange }: WaitlistDialogProps) {
       const data = await response.json();
 
       if (response.ok) {
-        console.log('Waitlist signup successful:', data);
         setSubmitted(true);
         toast.success('Successfully joined the waitlist! 🎉');
         
@@ -76,11 +75,7 @@ export function WaitlistDialog({ open, onOpenChange }: WaitlistDialogProps) {
         toast.error(data.error || 'Failed to join waitlist. Please try again.');
       }
     } catch (error) {
-      console.error('Error submitting waitlist form:', error);
-      
-      // OFFLINE FALLBACK: Speichere in lokaler Queue
       if (error instanceof Error && (error.name === 'TypeError' || error.name === 'TimeoutError')) {
-        console.log('🔌 Supabase not reachable, saving to offline queue...');
         
         addToQueue('waitlist', formData);
         

@@ -31,8 +31,6 @@ export function ContactDialog({ open, onOpenChange }: ContactDialogProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically send the form data to your backend
-    console.log('Contact form submitted:', formData);
     // Reset form and close dialog
     setFormData({ firstName: '', lastName: '', email: '', company: '', message: '' });
     onOpenChange(false);

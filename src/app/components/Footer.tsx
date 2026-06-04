@@ -62,11 +62,8 @@ export function Footer() {
             
             <div className="space-y-3">
               <div>
-                <button 
-                  onClick={() => {
-                    console.log('About button clicked!');
-                    setAboutOpen(true);
-                  }}
+                <button
+                  onClick={() => setAboutOpen(true)}
                   className="text-gray-300 hover:opacity-70 transition-opacity text-base block w-full text-left"
                 >
                   About Us
@@ -75,10 +72,7 @@ export function Footer() {
               
               <div>
                 <button
-                  onClick={() => {
-                    console.log('Careers button clicked!');
-                    setCareersOpen(true);
-                  }}
+                  onClick={() => setCareersOpen(true)}
                   className="text-gray-300 hover:opacity-70 transition-opacity text-base block w-full text-left"
                 >
                   Careers

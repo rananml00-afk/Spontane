@@ -24,8 +24,6 @@ export function SuggestionsDialog({ open, onOpenChange }: SuggestionsDialogProps
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, this would send the data to a backend
-    console.log('Suggestion submitted:', formData);
     setSubmitted(true);
     
     // Reset form after 3 seconds and close dialog

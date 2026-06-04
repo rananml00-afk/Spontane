@@ -32,8 +32,6 @@ export function addToQueue(type: 'speaking-partner' | 'waitlist', data: any): st
   
   queue.push(request);
   saveQueue(queue);
-  
-  console.log(`📦 Added ${type} request to offline queue:`, id);
   return id;
 }
 
@@ -44,8 +42,7 @@ function getQueue(): QueuedRequest[] {
   try {
     const stored = localStorage.getItem(QUEUE_KEY);
     return stored ? JSON.parse(stored) : [];
-  } catch (error) {
-    console.error('Error reading offline queue:', error);
+  } catch {
     return [];
   }
 }
@@ -56,8 +53,8 @@ function getQueue(): QueuedRequest[] {
 function saveQueue(queue: QueuedRequest[]): void {
   try {
     localStorage.setItem(QUEUE_KEY, JSON.stringify(queue));
-  } catch (error) {
-    console.error('Error saving offline queue:', error);
+  } catch {
+    // silently fail
   }
 }
 
@@ -68,7 +65,6 @@ function removeFromQueue(id: string): void {
   const queue = getQueue();
   const filtered = queue.filter(req => req.id !== id);
   saveQueue(filtered);
-  console.log(`✅ Removed request from queue:`, id);
 }
 
 /**
@@ -99,8 +95,7 @@ async function checkSupabaseHealth(projectId: string, publicAnonKey: string): Pr
       }
     );
     return response.ok;
-  } catch (error) {
-    console.warn('Supabase health check failed:', error);
+  } catch {
     return false;
   }
 }
@@ -119,12 +114,8 @@ export async function processQueue(projectId: string, publicAnonKey: string): Pr
     return { successful: 0, failed: 0, remaining: 0 };
   }
   
-  console.log(`🔄 Processing offline queue with ${queue.length} requests...`);
-  
-  // Erst prüfen ob Supabase erreichbar ist
   const isHealthy = await checkSupabaseHealth(projectId, publicAnonKey);
   if (!isHealthy) {
-    console.warn('⚠️ Supabase not available, keeping requests in queue');
     return { successful: 0, failed: 0, remaining: queue.length };
   }
   
@@ -133,7 +124,6 @@ export async function processQueue(projectId: string, publicAnonKey: string): Pr
   
   for (const request of queue) {
     if (request.retryCount >= MAX_RETRY) {
-      console.error(`❌ Request ${request.id} exceeded max retries, removing from queue`);
       removeFromQueue(request.id);
       failed++;
       continue;
@@ -158,25 +148,19 @@ export async function processQueue(projectId: string, publicAnonKey: string): Pr
       );
       
       if (response.ok) {
-        console.log(`✅ Successfully synced ${request.type} request:`, request.id);
         removeFromQueue(request.id);
         successful++;
       } else {
-        console.warn(`⚠️ Failed to sync request ${request.id}, will retry later`);
         incrementRetryCount(request.id);
         failed++;
       }
-    } catch (error) {
-      console.error(`Error syncing request ${request.id}:`, error);
+    } catch {
       incrementRetryCount(request.id);
       failed++;
     }
   }
   
   const remaining = getQueue().length;
-  
-  console.log(`📊 Queue processing complete: ${successful} successful, ${failed} failed, ${remaining} remaining`);
-  
   return { successful, failed, remaining };
 }
 
@@ -192,7 +176,6 @@ export function getQueueSize(): number {
  */
 export function clearQueue(): void {
   localStorage.removeItem(QUEUE_KEY);
-  console.log('🗑️ Offline queue cleared');
 }
 
 /**
@@ -201,18 +184,13 @@ export function clearQueue(): void {
 export function startAutoSync(projectId: string, publicAnonKey: string): void {
   // Versuche alle 2 Minuten zu synchronisieren
   setInterval(async () => {
-    const queueSize = getQueueSize();
-    if (queueSize > 0) {
-      console.log(`🔄 Auto-sync triggered (${queueSize} pending requests)`);
+    if (getQueueSize() > 0) {
       await processQueue(projectId, publicAnonKey);
     }
-  }, 120000); // 2 Minuten
-  
-  // Auch bei window focus synchronisieren
+  }, 120000);
+
   window.addEventListener('focus', async () => {
-    const queueSize = getQueueSize();
-    if (queueSize > 0) {
-      console.log(`🔄 Window focused, syncing ${queueSize} pending requests`);
+    if (getQueueSize() > 0) {
       await processQueue(projectId, publicAnonKey);
     }
   });
