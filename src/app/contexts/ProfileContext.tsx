@@ -17,50 +17,107 @@ export interface UserProfile {
   joinedEventIds: number[];
 }
 
+interface StoredAccount {
+  profile: UserProfile;
+  password: string;
+}
+
 interface ProfileContextType {
   profile: UserProfile | null;
   isLoggedIn: boolean;
   saveProfile: (data: UserProfile) => void;
   updateProfile: (data: UserProfile) => void;
+  register: (fullName: string, email: string, password: string, city: string) => void;
+  login: (email: string, password: string) => boolean;
   logout: () => void;
 }
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
-const STORAGE_KEY = 'spontane_profile';
+const ACCOUNT_KEY = 'spontane_account';
+const SESSION_KEY = 'spontane_session';
+
+function loadAccount(): StoredAccount | null {
+  try {
+    const raw = localStorage.getItem(ACCOUNT_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
 
 export function ProfileProvider({ children }: { children: ReactNode }) {
-  const [profile, setProfile] = useState<UserProfile | null>(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? JSON.parse(stored) : null;
-    } catch {
-      return null;
-    }
+  const [account, setAccount] = useState<StoredAccount | null>(loadAccount);
+  // Session: logged in if an account exists and session flag is set
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
+    return !!loadAccount() && sessionStorage.getItem(SESSION_KEY) === 'true';
   });
 
   useEffect(() => {
-    if (profile) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    if (account) {
+      localStorage.setItem(ACCOUNT_KEY, JSON.stringify(account));
     } else {
-      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(ACCOUNT_KEY);
     }
-  }, [profile]);
+  }, [account]);
+
+  const register = (fullName: string, email: string, password: string, city: string) => {
+    const profile: UserProfile = {
+      fullName,
+      email,
+      city,
+      bio: '',
+      languages: [],
+      interests: [],
+      memberSince: new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }),
+      upcomingEventIds: [1, 4, 3],
+      joinedEventIds: [6, 2],
+    };
+    const newAccount: StoredAccount = { profile, password };
+    setAccount(newAccount);
+    setIsLoggedIn(true);
+    sessionStorage.setItem(SESSION_KEY, 'true');
+  };
+
+  const login = (email: string, password: string): boolean => {
+    const stored = loadAccount();
+    if (stored && stored.profile.email === email && stored.password === password) {
+      setAccount(stored);
+      setIsLoggedIn(true);
+      sessionStorage.setItem(SESSION_KEY, 'true');
+      return true;
+    }
+    return false;
+  };
 
   const saveProfile = (data: UserProfile) => {
-    setProfile({ ...data, memberSince: new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) });
+    const updated: StoredAccount = {
+      profile: { ...data, memberSince: new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) },
+      password: account?.password ?? '',
+    };
+    setAccount(updated);
+    setIsLoggedIn(true);
+    sessionStorage.setItem(SESSION_KEY, 'true');
   };
 
   const updateProfile = (data: UserProfile) => {
-    setProfile(data);
+    if (!account) return;
+    setAccount({ ...account, profile: data });
   };
 
   const logout = () => {
-    setProfile(null);
+    setIsLoggedIn(false);
+    sessionStorage.removeItem(SESSION_KEY);
   };
 
   return (
-    <ProfileContext.Provider value={{ profile, isLoggedIn: !!profile, saveProfile, updateProfile, logout }}>
+    <ProfileContext.Provider value={{
+      profile: isLoggedIn ? (account?.profile ?? null) : null,
+      isLoggedIn,
+      saveProfile,
+      updateProfile,
+      register,
+      login,
+      logout,
+    }}>
       {children}
     </ProfileContext.Provider>
   );
