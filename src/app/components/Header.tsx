@@ -39,26 +39,34 @@ export function Header() {
 
           {/* Desktop Navigation - Right Side */}
           <div className="hidden md:flex items-center space-x-8">
-            <nav className="flex items-center space-x-8">
-              <button 
+            <nav className="flex items-center space-x-6">
+              <Link
+                to="/"
+                className="text-base hover:opacity-70 transition-all"
+                style={{ color: '#c0913f' }}
+              >
+                Home
+              </Link>
+              <Link
+                to="/events"
+                className="text-base hover:opacity-70 transition-all"
+                style={{ color: '#c0913f' }}
+              >
+                Events
+              </Link>
+              <Link
+                to="/create-event"
+                className="text-base hover:opacity-70 transition-all"
+                style={{ color: '#c0913f' }}
+              >
+                Create Event
+              </Link>
+              <button
                 onClick={() => setIsContactOpen(true)}
                 className="text-base text-gray-600 hover:opacity-70 transition-all"
                 style={{ color: '#c0913f' }}
               >
                 {t('contact')}
-              </button>
-              <button 
-                onClick={() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                  setTimeout(() => {
-                    const element = document.getElementById('speaking-partner-section');
-                    element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }, 100);
-                }}
-                className="text-base text-gray-600 hover:opacity-70 transition-all"
-                style={{ color: '#c0913f' }}
-              >
-                Find Partner
               </button>
             </nav>
             
@@ -103,6 +111,27 @@ export function Header() {
         {isMenuOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 border-t border-gray-200">
+              <Link
+                to="/"
+                onClick={() => setIsMenuOpen(false)}
+                className="block w-full text-left px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md"
+              >
+                Home
+              </Link>
+              <Link
+                to="/events"
+                onClick={() => setIsMenuOpen(false)}
+                className="block w-full text-left px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md"
+              >
+                Events
+              </Link>
+              <Link
+                to="/create-event"
+                onClick={() => setIsMenuOpen(false)}
+                className="block w-full text-left px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md"
+              >
+                Create Event
+              </Link>
               <button
                 onClick={() => {
                   setIsContactOpen(true);
@@ -112,22 +141,6 @@ export function Header() {
               >
                 {t('contact')}
               </button>
-              <Link
-                to="/"
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  setTimeout(() => {
-                    const element = document.getElementById('speaking-partner-section');
-                    element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }, 100);
-                }}
-                className="block w-full text-left px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md font-medium"
-              >
-                <div className="flex flex-col leading-tight">
-                  <span>Tandem</span>
-                  <span>Partner</span>
-                </div>
-              </Link>
               
               {/* Mobile CTA and Language */}
               <div className="flex items-center justify-between px-3 py-2 space-x-3">
