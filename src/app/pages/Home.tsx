@@ -3,6 +3,7 @@ import { Banner } from "../components/Banner";
 import { MonstersSection } from "../components/MonstersSection";
 import { FAQ } from "../components/FAQ";
 import { SpeakingPartnerSection } from "../components/SpeakingPartnerSection";
+import { supabase } from "../utils/supabase/client";
 
 interface Stats {
   totalEvents: number;
@@ -15,22 +16,29 @@ function StatsBar() {
   const [stats, setStats] = useState<Stats | null>(null);
 
   useEffect(() => {
-    // Try the real endpoint; fall back to derived mock data if unavailable
-    fetch('/api/stats')
-      .then((res) => {
-        if (!res.ok) throw new Error('not ok');
-        return res.json();
-      })
-      .then((data: Stats) => setStats(data))
-      .catch(() => {
-        // Simulate realistic stats derived from the app's data
-        setTimeout(() => {
-          setStats({ totalEvents: 9, totalUsers: 847, totalCities: 8, totalLanguages: 6 });
-        }, 800);
-      });
+    async function fetchStats() {
+      const today = new Date().toISOString().split('T')[0];
+      const [eventsRes, usersRes, citiesRes, languagesRes] = await Promise.all([
+        supabase.from('events').select('id', { count: 'exact', head: true }).gte('date', today),
+        supabase.from('profiles').select('id', { count: 'exact', head: true }),
+        supabase.from('events').select('city').gte('date', today),
+        supabase.from('events').select('language').gte('date', today),
+      ]);
+
+      const totalEvents = eventsRes.count ?? 0;
+      const totalUsers = usersRes.count ?? 0;
+      const totalCities = new Set((citiesRes.data ?? []).map((r) => r.city).filter(Boolean)).size;
+      const totalLanguages = new Set(
+        (languagesRes.data ?? []).flatMap((r) => (r.language ?? '').split(' / ').map((l: string) => l.trim())).filter(Boolean)
+      ).size;
+
+      setStats({ totalEvents, totalUsers, totalCities, totalLanguages });
+    }
+    fetchStats();
   }, []);
 
   if (!stats) return null;
+  if (stats.totalEvents === 0 && stats.totalUsers === 0) return null;
 
   const items: { value: number; label: string }[] = [
     { value: stats.totalEvents,    label: 'EVENTS'    },
