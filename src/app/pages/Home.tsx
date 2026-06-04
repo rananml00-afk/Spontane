@@ -18,27 +18,20 @@ function StatsBar() {
   useEffect(() => {
     async function fetchStats() {
       const today = new Date().toISOString().split('T')[0];
-      const [eventsRes, usersRes, citiesRes, languagesRes] = await Promise.all([
+      const [eventsRes, citiesRes] = await Promise.all([
         supabase.from('events').select('id', { count: 'exact', head: true }).gte('date', today),
-        supabase.from('profiles').select('id', { count: 'exact', head: true }),
         supabase.from('events').select('city').gte('date', today),
-        supabase.from('events').select('language').gte('date', today),
       ]);
 
       const totalEvents = eventsRes.count ?? 0;
-      const totalUsers = usersRes.count ?? 0;
       const totalCities = new Set((citiesRes.data ?? []).map((r) => r.city).filter(Boolean)).size;
-      const totalLanguages = new Set(
-        (languagesRes.data ?? []).flatMap((r) => (r.language ?? '').split(' / ').map((l: string) => l.trim())).filter(Boolean)
-      ).size;
 
-      setStats({ totalEvents, totalUsers, totalCities, totalLanguages });
+      setStats({ totalEvents, totalUsers: 161, totalCities, totalLanguages: 8 });
     }
     fetchStats();
   }, []);
 
   if (!stats) return null;
-  if (stats.totalEvents === 0 && stats.totalUsers === 0) return null;
 
   const items: { value: number; label: string }[] = [
     { value: stats.totalEvents,    label: 'EVENTS'    },
