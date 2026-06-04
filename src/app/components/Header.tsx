@@ -50,11 +50,9 @@ export function Header() {
             <nav className="flex items-center gap-6">
               <Link to="/" className={navLinkClass} style={navColor}>Home</Link>
               <Link to="/events" className={navLinkClass} style={navColor}>Events</Link>
-              <Link to="/tandem-partner" className={navLinkClass} style={navColor}>
-                Tandem Partner
-              </Link>
               <Link to="/create-event" className={navLinkClass} style={navColor}>Create Event</Link>
               <Link to="/community" className={navLinkClass} style={navColor}>Community</Link>
+              <Link to="/tandem-partner" className={navLinkClass} style={navColor}>Tandem Partner</Link>
               <button onClick={() => setIsContactOpen(true)} className={navLinkClass} style={navColor}>
                 {t('contact')}
               </button>
@@ -114,9 +112,9 @@ export function Header() {
             <div className="px-2 pt-2 pb-3 space-y-1">
               <Link to="/" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md">Home</Link>
               <Link to="/events" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md">Events</Link>
-              <Link to="/tandem-partner" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md">Tandem Partner</Link>
               <Link to="/create-event" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md">Create Event</Link>
               <Link to="/community" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md">Community</Link>
+              <Link to="/tandem-partner" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md">Tandem Partner</Link>
               <button onClick={() => { setIsContactOpen(true); setIsMenuOpen(false); }} className="block w-full text-left px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md">
                 {t('contact')}
               </button>
